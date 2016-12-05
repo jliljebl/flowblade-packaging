@@ -1,0 +1,17 @@
+# Flowblade .gitignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+mlt.py
+
+# C extensions
+*.so
+
+*.po~
+*.py~
+*.pot~
+
+# Phantom 2D contents
+/deb/flowblade
+
