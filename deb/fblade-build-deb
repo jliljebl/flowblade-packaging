@@ -1,0 +1,42 @@
+#!/bin/bash
+
+CODE_ROOT_DIR="/home/janne/codes/flowblade/flowblade/flowblade-trunk"
+CODE_SOURCE_DIR=$CODE_ROOT_DIR"/Flowblade"
+PACKING_DIR="/home/janne/codes/flowblade-packaging/flowblade-packaging/deb"
+VERSION="1.10.0"
+PACKAGE_NAME="flowblade-"$VERSION
+DEB_ROOT_DIR=$PACKING_DIR"/flowblade"
+DEB_ARCHIVE_DIR=$DEB_ROOT_DIR"/"$PACKAGE_NAME"-1_all"
+DEBIAN_DIR=$DEB_ARCHIVE_DIR"/DEBIAN"
+DEB_FILE=$DEB_DIR".deb"
+USR_DIR=$DEB_ARCHIVE_DIR"/usr"
+USR_CODE_DIR=$USR_DIR"/share/flowblade"
+
+# LOOK OUT!!!!!!!
+sudo rm -rf $DEB_ROOT_DIR
+
+mkdir $DEB_ROOT_DIR
+mkdir $DEB_ARCHIVE_DIR
+mkdir $DEBIAN_DIR
+mkdir $USR_DIR
+
+# Copy static files
+cp -a $PACKING_DIR"/DEBIAN_CONTENTS/." $DEB_ARCHIVE_DIR"/DEBIAN"
+cp -a $PACKING_DIR"/USR_CONTENTS/." $USR_DIR
+
+# Copy version dependendent files
+cp $PACKING_DIR"/VERSION_FILES/control" $DEBIAN_DIR"/control"
+cp $PACKING_DIR"/VERSION_FILES/flowblade.egg-info" $USR_DIR"/share/flowblade/"$PACKAGE_NAME".egg.info"
+
+# Copy app source
+echo "Copying source..."
+cp -r $CODE_SOURCE_DIR $USR_CODE_DIR
+
+# Copy launch script
+cp $CODE_ROOT_DIR"/flowblade" $USR_DIR"/bin/flowblade"
+
+sudo chown -R root:root $DEB_ARCHIVE_DIR
+
+dpkg-deb --build $DEB_ARCHIVE_DIR
+
+
