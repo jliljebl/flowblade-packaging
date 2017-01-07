@@ -35,7 +35,58 @@ cp -r $CODE_SOURCE_DIR $USR_CODE_DIR
 # Copy launch script
 cp $CODE_ROOT_DIR"/flowblade" $USR_DIR"/bin/flowblade"
 
+# Set file premissions 
 sudo chown -R root:root $DEB_ARCHIVE_DIR
+
+
+sudo chmod -R 755 $USR_DIR"/bin"
+sudo chmod -R 755 $USR_DIR"/lib"
+sudo chmod -R 755 $USR_DIR"/share/flowblade/Flowblade/launch"
+sudo chmod -R 755 $USR_DIR"/share/doc"
+sudo chmod -R 755 $USR_DIR"/share/flowblade/Flowblade/locale"
+
+sudo chmod 755 $USR_DIR"/share"
+sudo chmod 755 $USR_DIR"/share/applications"
+sudo chmod 755 $USR_DIR"/share/flowblade"
+sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade"
+sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/res/render/"
+sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/res/render/renderencoding.xml"
+sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/tools/"
+sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/vieweditor/"
+sudo chmod 755 $USR_DIR"/share/flowblade/flowblade-1.10.0.egg.info"
+sudo chmod 755 $USR_DIR"/share/mime/packages/flowblade.xml"
+
+
+#sudo chmod -R 644 $USR_DIR"/share/flowblade/Flowblade"
+sudo find $USR_DIR -name "*.py" -exec chmod 644 {} \;
+sudo find $USR_DIR -name "*.pyc" -exec chmod 644 {} \;
+
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/darktheme" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/img" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/profiles" -name "*_*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/help" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/filters" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/filters/wipes" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/patternproducer" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/it" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/cs" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/fi" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/hu" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/fr" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/es" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/de" -name "*.*" -exec chmod 644 {} \;
+
+# locales
+#sudo chmod -R 644 $USR_DIR"/share/flowblade/Flowblade/locale/"
+#sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/locale/cs"
+#sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/locale/it"
+
+sudo chmod 644 $USR_DIR"/share/menu/flowblade" 
+sudo chmod 644 $USR_DIR"/share/doc/flowblade/README"
+sudo chmod 644 $USR_DIR"/share/doc/flowblade/copyright"
+sudo chmod 644 $USR_DIR"/share/man/man1/flowblade.1.gz"
+sudo chmod 644 $USR_DIR"/share/applications/flowblade.desktop"
+sudo chmod 644 $USR_DIR"/share/menu/flowblade"
 
 dpkg-deb --build $DEB_ARCHIVE_DIR
 
