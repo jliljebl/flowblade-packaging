@@ -12,6 +12,5 @@ mlt.py
 *.py~
 *.pot~
 
-# Phantom 2D contents
-/deb/flowblade
+
 
