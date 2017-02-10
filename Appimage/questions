@@ -1,0 +1,53 @@
+So I need to build the final apppiamge on virtualbox Ubuntu 14.04? The whole idea is to piggypack installations on distributions?
+
+Let's just build one on my 16.10.
+
+Where I can get apprun file template? (ggogle gives aungularJS)
+
+Can I autogerate apprun file?
+
+- Oh you can download it,functions.sh...I somehow by luck received information on functions.sh
+
+I can't use functions.sh raw?
+
+How can I run Flowblade.yml?
+
+https://github.com/probonopd/AppImageKit/wiki/Creating-AppImages is not very good
+
+
+"Create a working AppDir from your binaries. A working AppImage runs your app when you execute its AppRun file." - that fucking helpful....HOW?
+
+Let's try using stuff from functions.sh.....
+
+get_apprun creates run binary file? AppRun is the Appimage special sauce I'm not supposed to create my own?
+
+So functions.sh finds .desktop file and icon if Flowblade installed in system I can just cpopy them too, from my own files.
+
+get_icon function isn't working: "ls: cannot access '.png': No such file or directory"??? Maybe ... I don't know... I need to set and export $LOWERAPP value
+
+export worked "ls: cannot access 'flowblade.png':" but still didn't find it
+
+I will need to just use my own file.
+
+How about getting 
+
+"Convert existing binary packages. This option migh..." THE FUCKING THING DOESN'T TELL HOW??? how do I go from Flowblade.yml to an AppImage
+
+Oh, there is some AppImageKit...how about linking to that from "Convert existing binary packages. This option migh...".
+
+
+And what the FUCK is Travis-CI? Do I need to join to Travis-CI to build appimages?
+
+"Gather suitable binaries of all dependencies..." How the fuck do I do that...real simple.
+
+
+...now I'm downloading binaries AppDir Assistant from AppImage Assistant from SourceForge...fucking adds
+
+...running them does nothing
+
+...I'm giving up for now
+
+
+
+
+
