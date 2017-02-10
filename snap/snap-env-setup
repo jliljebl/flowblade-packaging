@@ -2,7 +2,7 @@
 
 #sudo apt install snapcraft
 
-snapcraft init
+#snapcraft init
 
-snapcraft login
-snapcraft register fblade-test
+#snapcraft login
+#snapcraft register fblade-test

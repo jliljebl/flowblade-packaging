@@ -48,6 +48,24 @@ And what the FUCK is Travis-CI? Do I need to join to Travis-CI to build appimage
 ...I'm giving up for now
 
 
+-------------------------------------------- SESSION 2
+Got some info from AppImage people. the magic words to get rolling are:
+
+wget "https://github.com/probonopd/AppImages/raw/master/recipes/meta/Recipe"
+bash -ex Recipe Flowblade
+
+So Recipe is sameish as snapcraft, it takes XXX.yml data as input and builds the Appimage.
+
+...and an Appimage was created, hooray.
+
+
+
+
+
+
+
+
+
 
 
 

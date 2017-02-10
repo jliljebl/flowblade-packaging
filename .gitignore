@@ -12,5 +12,8 @@ mlt.py
 *.py~
 *.pot~
 
+/Appimage/out
+/Appimage/Flowblade
+
 
 
