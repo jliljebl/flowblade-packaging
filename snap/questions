@@ -1,0 +1,45 @@
+Compared to Appimage the docs seemimgly answer questions better.
+
+Now I believe that I need  snapcraft installed an i'm ready to go
+
+Haha ... Travis CI is back..but these peopleexplain it better ... its git build service and I need some stuff setup to build straight from it. i don't think anything travis related is good for me, just extra work.
+
+Ok, run snapcraft init
+
+This is some cetral shit  you need to register
+
+Things are taking a turn for the worse: "Enter your Ubuntu One SSO credentials."
+
+
+Downhill continues:
+
+Login successful.
+Registering Flowblade.
+Registration failed.
+
+Ok....why? ...from net "lowercase letters"
+
+
+Next up:
+
+The name 'flowblade' is reserved.
+
+If you are the publisher most users expect for 'flowblade' then please claim the name at 'https://myapps.developer.ubuntu.com/dev/click-apps/register-name/?series=16&name=flowblade'
+
+
+...and	
+The name you requested is now pending review. You can use another name while you wait for approval.
+
+Lets try with fblade-test
+
+Congratulations! You're now the publisher for 'fblade-test'.......jee, positive enforcement...someone read at least one psychology book.
+
+Now i need to just fill the blanks in snapcraft.yaml file, right....
+
+I have succesfully completed the hello tutorial, next to actual work
+
+
+
+
+
+
