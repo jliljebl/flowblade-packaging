@@ -29,7 +29,7 @@ export worked "ls: cannot access 'flowblade.png':" but still didn't find it
 
 I will need to just use my own file.
 
-How about getting 
+How about getting dependecies like python-dbus
 
 "Convert existing binary packages. This option migh..." THE FUCKING THING DOESN'T TELL HOW??? how do I go from Flowblade.yml to an AppImage
 
