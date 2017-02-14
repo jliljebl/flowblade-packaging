@@ -1,0 +1,286 @@
+#!/usr/bin/python
+
+import copy
+import os
+import sys
+import fnmatch
+import shutil
+
+# Returns filename->path dict of files matching pattern
+def get_files_dict(root_folder, pattern):
+    files_dict = {}
+    for root, dirnames, filenames in os.walk(root_folder):
+        for filename in fnmatch.filter(filenames, pattern):
+            path = os.path.join(root, filename)
+            files_dict[filename] = path
+
+    return files_dict 
+
+def so_dot_dict_with_basename_keys(so_dot_dict):
+    new_dict = {}
+
+    for lib_dot_name, path in so_dot_dict.iteritems():
+        base_name_end = lib_dot_name.index("so") + 2
+        lib_base_name = lib_dot_name[0:base_name_end]
+        new_dict[lib_base_name] = path
+    
+    return new_dict
+    
+# print dict keys alphabetized
+def print_files_dict(msg, file_items):
+    print msg
+    
+    files = []
+    for key, value in file_items.iteritems():
+        files.append(key)
+        
+    alph_files = sorted(files)
+    
+    for f in alph_files:
+        print f
+
+
+# ROOT DIR FOR LOOKING FOR THE SOURCE LIBS FROM ARGS
+SOURCE_ROOT_DIR = sys.argv[1]
+# Get source '*.so' libs
+source_so_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so')
+# Get source '*.so.*' libs
+source_so_dot_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so.*')
+
+
+# DESTDIR FOR COPYING LIBS INTO; SCRIPT IS ASSUMED TO IN SAME DIRECTORY AS 'Recipe' script
+APPIMAGE_NAME = "Flowblade"
+DEST_ROOT_DIR = os.path.dirname(os.path.abspath(sys.argv[0])) + "/" + APPIMAGE_NAME + "/" + APPIMAGE_NAME + ".AppDir"
+# Get source '*.so' libs
+dest_so_libs = get_files_dict(DEST_ROOT_DIR, '*.so')
+# Get source '*.so.*' libs
+dest_so_dot_libs = get_files_dict(DEST_ROOT_DIR, '*.so.*')
+
+
+#print found libs
+#print_files_dict("---------------------------------source_so_libs", source_so_libs)
+#print_files_dict("---------------------------------source_so_dot_libs", source_so_dot_libs)
+#print_files_dict("---------------------------------dest_so_libs", dest_so_libs)
+#print_files_dict("---------------------------------dest_so_dot_libs", dest_so_dot_libs)
+
+
+# Create ".so" copy pair list
+so_copy_pairs = []
+DEST_FREI0R_FOLDER = DEST_ROOT_DIR + "/usr/lib/frei0r-1/"
+for source_lib, source_lib_path in source_so_libs.iteritems():
+    try:
+        dest_lib_path = dest_so_libs[source_lib]
+        so_copy_pairs.append((source_lib_path, dest_lib_path))
+        #print source_lib, " TO BE COPIED"
+    except:
+        # Add new frei0r files to copy list
+        if "frei0r-1" in source_lib_path:
+            dest_lib_path = DEST_FREI0R_FOLDER + source_lib
+            so_copy_pairs.append((source_lib_path, dest_lib_path))
+            #print source_lib, " NEW FREI0R PLUGIN"
+        else:
+            pass
+            #print source_lib, " .so NOT IS DEST"
+
+# Create ".so." copy pair list
+so_dot_copy_pairs = []
+source_dot_basename = so_dot_dict_with_basename_keys(source_so_dot_libs)
+dest_dot_basename = so_dot_dict_with_basename_keys(dest_so_dot_libs)
+
+for source_lib, source_lib_path in source_dot_basename.iteritems():
+    try:
+        dest_lib_path = dest_dot_basename[source_lib]
+        so_dot_copy_pairs.append((source_lib_path, dest_lib_path))
+        #print source_lib, " TO BE COPIED"
+    except:
+        #print source_lib, ".* NOT IS DEST"
+        pass
+
+
+print "------------------------------------------------ SO LIBS"
+# Copy ".so" libs
+for path_pair in so_copy_pairs:
+    source_path, dest_path = path_pair
+    shutil.copyfile(source_path, dest_path)
+    print "COPIED: ", source_path, " -> ", dest_path
+    
+print "------------------------------------------------ SO DOT LIBS"
+# Copy ".so." libs
+# Delete old  ".so." libs from dest
+for path_pair in so_dot_copy_pairs:
+    source_path, dest_path = path_pair
+    os.remove(dest_path)
+    print "DELETED: ", dest_path
+    source_folder, source_name = os.path.split(source_path)
+    dest_folder, dest_name = os.path.split(dest_path)
+    new_dest_path = dest_folder + "/" + source_name
+    shutil.copyfile(source_path, new_dest_path)
+    print "COPIED: ", source_path, " -> ", new_dest_path
+    
+    
+# libavfilter.so .* are new libswresample.so .* are new libraries, not present dest maybe
+avfilter_source_path = source_dot_basename["libavfilter.so"]
+swresample_source_path = source_dot_basename["libswresample.so"]
+
+aw_folder, aw_name = os.path.split(avfilter_source_path)
+swr_folder, swr_name = os.path.split(swresample_source_path)
+DEST_NEW_LIB_FOLDER = DEST_ROOT_DIR + "/usr/lib/x86_64-linux-gnu/"
+aw_dest = DEST_NEW_LIB_FOLDER + aw_name
+swr_dest = DEST_NEW_LIB_FOLDER +  swr_name
+
+print "COPIED: ", avfilter_source_path, " -> ", aw_dest
+print "COPIED: ", swresample_source_path, " -> ", swr_dest
+shutil.copyfile(avfilter_source_path, aw_dest)
+shutil.copyfile(swresample_source_path, swr_dest)
+
+"""
+def get
+
+def get_libs_list(root_path):
+    libraries = []
+
+    for root, dirnames, filenames in os.walk(root_path):
+        # get '*.so' versions of libraries
+        for filename in fnmatch.filter(filenames, '*.so'):
+            libpath = os.path.join(root, filename)
+            paths = []
+            paths.append(libpath)
+            # get '*.so.*' versions of libraries
+            for lib_alt in fnmatch.filter(copy.deepcopy(filenames), filename + '.*'):
+                paths.append( os.path.join(root,lib_alt))
+            
+            libraries.append((filename, paths))
+            #print paths
+
+    return libraries
+
+def get_multi_libs_list(root_path):
+    libraries = []
+
+    for root, dirnames, filenames in os.walk(root_path):
+        # get '*.so' versions of libraries
+        for filename in fnmatch.filter(filenames, '*.so'):
+            libpath = os.path.join(root, filename)
+            paths = []
+            paths.append(libpath)
+            # get '*.so.*' versions of libraries
+            for lib_alt in fnmatch.filter(copy.deepcopy(filenames), filename + '.*'):
+                paths.append( os.path.join(root,lib_alt))
+            
+            if len(paths) > 1:
+                libraries.append((filename, paths))
+                #print paths
+./appimagetool ./Flowblade.AppDir/ 
+    return libraries
+"""
+
+"""
+# get libs from SOURCE_ROOT_DIR
+source_libs = get_libs_list(SOURCE_ROOT_DIR)
+
+libraries = []
+for root, dirnames, filenames in os.walk(SOURCE_ROOT_DIR):
+    # get '*.so' versions of libraries
+    for filename in fnmatch.filter(filenames, '*.so'):
+        libpath = os.path.join(root, filename)
+        paths = []
+        paths.append(libpath)
+        # get '*.so.*' versions of libraries
+        for lib_alt in fnmatch.filter(copy.deepcopy(filenames), filename + '.*'):
+            paths.append( os.path.join(root,lib_alt))
+        
+        libraries.append((filename, paths))
+        #print paths
+
+source_libs = sorted(libraries,  key=lambda tupl: tupl[0])
+
+print "source multi"
+source_multi_libs = get_multi_libs_list(SOURCE_ROOT_DIR)
+for lib_item in source_multi_libs:
+    lib_name, source_paths = lib_item
+    print source_paths
+
+print len(source_libs), " libraries found is source dir "  + SOURCE_ROOT_DIR + "\n"
+
+for lib in source_libs:
+    lib_name, source_paths = lib
+    #print lib_name
+
+# Get dest dir
+APPIMAGE_NAME = "Flowblade"
+DEST_ROOT_DIR = os.path.dirname(os.path.abspath(sys.argv[0])) + "/" + APPIMAGE_NAME + "/" + APPIMAGE_NAME + ".AppDir"
+
+# get libs from DEST_ROOT_DIR
+dest_libs = get_libs_list(DEST_ROOT_DIR)
+print len(dest_libs), " libraries found is dest dir "  + DEST_ROOT_DIR + "\n"
+
+# '*.so' libs
+libraries = []
+for root, dirnames, filenames in os.walk(DEST_ROOT_DIR):
+    # get '*.so' versions of libraries
+    for filename in fnmatch.filter(filenames, '*.so'):
+        libraries.append(filename)
+        pass
+
+dest_so_libs = sorted(libraries,  key=lambda tupl: tupl[0])
+
+
+for lib in dest_so_libs:
+    #lib_name, source_paths = lib
+    #print lib_name
+    print lib
+    
+print "---------------------------------"
+
+# '*.so.*' libs
+libraries = []
+for root, dirnames, filenames in os.walk(DEST_ROOT_DIR):
+    for filename in fnmatch.filter(filenames, '*.so.*'):
+        libraries.append(filename)
+        pass
+dest_so_dot_libs = sorted(libraries,  key=lambda tupl: tupl[0])
+
+for lib in dest_so_dot_libs:
+    #lib_name, source_paths = lib
+    print lib
+
+
+print "dest multi"
+source_multi_libs = get_multi_libs_list(DEST_ROOT_DIR)
+for lib_item in source_multi_libs:
+    lib_name, source_paths = lib_item
+    print source_paths
+    
+# Create dict of desct libraries with '*.so' name as key
+dest_libs_dict = {}
+for lib_item in dest_libs:
+    file_name, paths = lib_item
+    dest_libs_dict[file_name] = paths
+
+# 
+do_write = True
+for arg in sys.argv:
+    if arg.lower() == "-xdg":
+        do_write = False
+        
+# Delete matching libs from DEST_ROOT_DIR and copy libs from SOURCE_ROOT_DIR to corretct directories
+for source_lib_item in source_libs:
+    lib_name, source_paths = source_lib_item
+    try:
+        dest_paths = dest_libs_dict[lib_name]
+        #print "REPLACE: ", lib_name
+        dest_folder, dest_lib =  os.path.split(dest_paths[0])
+        # Delete dest libraries
+        for dest_lib_path in dest_paths:
+            #print "REMOVE: ", dest_lib_path
+            #os.remove(dest_lib_path)
+            pass
+        # Copy source lis to dest
+        for source_lib_path in source_paths:
+            source_folder, souce_lib = os.path.split(source_lib_path)
+            dest_lib_path = dest_folder + souce_lib
+            #print "COPY: ", source_lib_path, dest_lib_path
+            #shutil.copyfile(source_lib_path, dst)
+    except:
+        pass # lib not in dest
+"""

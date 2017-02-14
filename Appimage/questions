@@ -58,8 +58,24 @@ So Recipe is sameish as snapcraft, it takes XXX.yml data as input and builds the
 
 ...and an Appimage was created, hooray.
 
+--------------------------------------- SESSION 3
+So there are is no docs radily available on creating recipes, I have to see if any exist all, all i have seen so far examples.
+
+..So how can I add my own binaries into appimage, just copy them???
+
+Yes, probonopd aswered:
+
+"""
+Absolutely, yes. After running the yml, you will see a Flowblade/Flowblade.AppDir directory. Just edit the contents of this directory as you like, then from the Flowblade directory, run ./appimagetool ./Flowblade.AppDir
+"""
+
+...lets make script to copy libs and see 
+
+...I created a script that replaces binaries .AppDir with binaries compiled by Dan's script and then running the build command loads the old binarise from .debs...uh.
 
 
+--------------------------------------- SESSION 4
+Maybe removing debs from Flowblade folder will packagege without them...or maybe there is a switch that builds without unpacking debs
 
 
 

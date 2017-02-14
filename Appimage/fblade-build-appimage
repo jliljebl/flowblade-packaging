@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# Recipe is available, run it.
-wget "https://github.com/probonopd/AppImages/raw/master/recipes/meta/Recipe"
+# Recipe is available from appimage people, get it, run it.
+#wget "https://github.com/probonopd/AppImages/raw/master/recipes/meta/Recipe"
 bash -ex Recipe Flowblade

@@ -48,13 +48,14 @@ get_apprun()
 # (it can be beneficial to run this multiple times)
 copy_deps()
 {
+  PWD=$(readlink -f .)
   FILES=$(find . -type f -executable -or -name *.so.* -or -name *.so | sort | uniq )
   for FILE in $FILES ; do
     ldd "${FILE}" | grep "=>" | awk '{print $3}' | xargs -I '{}' echo '{}' >> DEPSFILE
   done
   DEPS=$(cat DEPSFILE | sort | uniq)
   for FILE in $DEPS ; do
-    if [ -e $FILE ] ; then
+    if [ -e $FILE ] && [[ $(readlink -f $FILE)/ != $PWD/* ]] ; then
       cp -v --parents -rfL $FILE ./ || true
     fi
   done
@@ -74,7 +75,7 @@ delete_blacklisted()
   BLACKLISTED_FILES=$(wget -q https://github.com/probonopd/AppImages/raw/master/excludelist -O - | sed '/^\s*$/d' | sed '/^#.*$/d')
   echo $BLACKLISTED_FILES
   for FILE in $BLACKLISTED_FILES ; do
-    FOUND=$(find . -type f -name "${FILE}" 2>/dev/null)
+    FOUND=$(find . -xtype f -name "${FILE}" 2>/dev/null)
     if [ ! -z "$FOUND" ] ; then
       echo "Deleting blacklisted ${FOUND}"
       rm -f "${FOUND}"
@@ -91,7 +92,7 @@ delete_blacklisted()
 # Echo highest glibc version needed by the executable files in the current directory
 glibc_needed()
 {
-  find . -name *.so -or -name *.so.* -or -type f -executable  -exec readelf -s {} \; | grep -o '@GLIBC_2.* ' | sed 's/@GLIBC_//g' | sort --version-sort | tail -n 1
+  find . -name *.so -or -name *.so.* -or -type f -executable  -exec readelf -s '{}' 2>/dev/null \; | sed -n 's/.*@GLIBC_//p'| awk '{print $1}' | sort --version-sort | tail -n 1
 }
 # Add desktop integration
 # Usage: get_desktopintegration name_of_desktop_file_and_exectuable
