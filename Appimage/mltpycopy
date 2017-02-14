@@ -8,8 +8,12 @@ import shutil
 
 # Get dirs
 SOURCE_ROOT_DIR = sys.argv[1]
+
 APPIMAGE_NAME = "Flowblade"
 DEST_ROOT_DIR = os.path.dirname(os.path.abspath(sys.argv[0])) + "/" + APPIMAGE_NAME + "/" + APPIMAGE_NAME + ".AppDir"
+
+print "SOURCE_ROOT_DIR: ", SOURCE_ROOT_DIR
+print "DEST_ROOT_DIR: ", DEST_ROOT_DIR
 
 # Returns filename->path dict of files matching pattern
 def get_file(root_folder, pattern):

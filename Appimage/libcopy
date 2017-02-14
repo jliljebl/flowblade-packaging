@@ -6,6 +6,16 @@ import sys
 import fnmatch
 import shutil
 
+# Get ROOT DIR FOR LOOKING FOR THE SOURCE LIBS FROM ARGS
+# Get DESTDIR FOR COPYING LIBS INTO; SCRIPT IS ASSUMED TO IN SAME DIRECTORY AS 'Recipe' script
+SOURCE_ROOT_DIR = sys.argv[1]
+APPIMAGE_NAME = "Flowblade"
+DEST_ROOT_DIR = os.path.dirname(os.path.abspath(sys.argv[0])) + "/" + APPIMAGE_NAME + "/" + APPIMAGE_NAME + ".AppDir"
+
+print "SOURCE_ROOT_DIR: ", SOURCE_ROOT_DIR
+print "DEST_ROOT_DIR: ", DEST_ROOT_DIR
+
+
 # Returns filename->path dict of files matching pattern
 def get_files_dict(root_folder, pattern):
     files_dict = {}
@@ -40,28 +50,16 @@ def print_files_dict(msg, file_items):
         print f
 
 
-# ROOT DIR FOR LOOKING FOR THE SOURCE LIBS FROM ARGS
-SOURCE_ROOT_DIR = sys.argv[1]
 # Get source '*.so' libs
 source_so_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so')
 # Get source '*.so.*' libs
 source_so_dot_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so.*')
 
 
-# DESTDIR FOR COPYING LIBS INTO; SCRIPT IS ASSUMED TO IN SAME DIRECTORY AS 'Recipe' script
-APPIMAGE_NAME = "Flowblade"
-DEST_ROOT_DIR = os.path.dirname(os.path.abspath(sys.argv[0])) + "/" + APPIMAGE_NAME + "/" + APPIMAGE_NAME + ".AppDir"
 # Get source '*.so' libs
 dest_so_libs = get_files_dict(DEST_ROOT_DIR, '*.so')
 # Get source '*.so.*' libs
 dest_so_dot_libs = get_files_dict(DEST_ROOT_DIR, '*.so.*')
-
-
-#print found libs
-#print_files_dict("---------------------------------source_so_libs", source_so_libs)
-#print_files_dict("---------------------------------source_so_dot_libs", source_so_dot_libs)
-#print_files_dict("---------------------------------dest_so_libs", dest_so_libs)
-#print_files_dict("---------------------------------dest_so_dot_libs", dest_so_dot_libs)
 
 
 # Create ".so" copy pair list
@@ -82,6 +80,7 @@ for source_lib, source_lib_path in source_so_libs.iteritems():
             pass
             #print source_lib, " .so NOT IS DEST"
 
+
 # Create ".so." copy pair list
 so_dot_copy_pairs = []
 source_dot_basename = so_dot_dict_with_basename_keys(source_so_dot_libs)
@@ -97,16 +96,17 @@ for source_lib, source_lib_path in source_dot_basename.iteritems():
         pass
 
 
-print "------------------------------------------------ SO LIBS"
 # Copy ".so" libs
+print "------------------------------------------------ SO LIBS"
 for path_pair in so_copy_pairs:
     source_path, dest_path = path_pair
     shutil.copyfile(source_path, dest_path)
     print "COPIED: ", source_path, " -> ", dest_path
-    
-print "------------------------------------------------ SO DOT LIBS"
+
+
 # Copy ".so." libs
 # Delete old  ".so." libs from dest
+print "------------------------------------------------ SO DOT LIBS"
 for path_pair in so_dot_copy_pairs:
     source_path, dest_path = path_pair
     os.remove(dest_path)
@@ -128,6 +128,7 @@ DEST_NEW_LIB_FOLDER = DEST_ROOT_DIR + "/usr/lib/x86_64-linux-gnu/"
 aw_dest = DEST_NEW_LIB_FOLDER + aw_name
 swr_dest = DEST_NEW_LIB_FOLDER +  swr_name
 
+print "------------------------------------------------ NEW LIBS"
 print "COPIED: ", avfilter_source_path, " -> ", aw_dest
 print "COPIED: ", swresample_source_path, " -> ", swr_dest
 shutil.copyfile(avfilter_source_path, aw_dest)
