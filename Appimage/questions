@@ -78,6 +78,12 @@ Absolutely, yes. After running the yml, you will see a Flowblade/Flowblade.AppDi
 Maybe removing debs from Flowblade folder will packagege without them...or maybe there is a switch that builds without unpacking debs
 
 
+--------------------------------------- SESSION 5, 6, 7
+..okay so 'Recipe' file was broekn on Appimage repoditory but an older one worked
+...and the whole approach worked, now I have booting AppImage on Ubuntu 16.10 with MLT 6.4.1
+...now to nake one one Ubuntu 14.04
+
+
 
 
 

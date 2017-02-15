@@ -9,7 +9,7 @@ cd $DIR
 # Create dir $HOME/flowblade, copy build sciptinto it and run it
 BINARY_ROOT_DIR=$HOME/flowblade
 mkdir $BINARY_ROOT_DIR
-cp ./build-flowblade $BINARY_ROOT_DIR/build-flowblade
+cp ././build-flowblade-mlt-6.4.1 $BINARY_ROOT_DIR/build-flowblade
 chmod +x $BINARY_ROOT_DIR/build-flowblade
 # Build Flowblade and libs
 $BINARY_ROOT_DIR/build-flowblade
