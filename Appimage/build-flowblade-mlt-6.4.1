@@ -15,9 +15,10 @@
 ################################################################################
 
 # These are all of the configuration variables with defaults
-INSTALL_DIR="$HOME/flowblade"
-AUTO_APPEND_DATE=1
-SOURCE_DIR="$INSTALL_DIR/src"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+INSTALL_DIR="$SCRIPT_DIR/build/usr/lib/x86_64-linux-gnu"
+AUTO_APPEND_DATE=0
+SOURCE_DIR="$SCRIPT_DIR/build/src"
 ACTION_GET_COMPILE_INSTALL=1
 ACTION_GET_ONLY=0
 ACTION_COMPILE_INSTALL=0
@@ -380,7 +381,7 @@ function set_globals {
 
   #####
   # ffmpeg
-  CONFIG[0]="./configure --prefix=$FINAL_INSTALL_DIR --disable-doc --disable-network --disable-ffserver --enable-gpl --enable-version3 --enable-shared --enable-debug --enable-pthreads --enable-runtime-cpudetect"
+  CONFIG[0]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR --disable-doc --disable-network --disable-ffserver --enable-gpl --enable-version3 --enable-shared --enable-debug --enable-pthreads --enable-runtime-cpudetect"
   if test 1 = "$FFMPEG_SUPPORT_THEORA" ; then
     CONFIG[0]="${CONFIG[0]} --enable-libtheora --enable-libvorbis"
   fi
@@ -399,11 +400,11 @@ function set_globals {
   # Add optional parameters
   CONFIG[0]="${CONFIG[0]} $FFMPEG_ADDITIONAL_OPTIONS"
   CFLAGS_[0]="-I$FINAL_INSTALL_DIR/include $CFLAGS"
-  LDFLAGS_[0]="-L$FINAL_INSTALL_DIR/lib $LDFLAGS"
+  LDFLAGS_[0]="-L$FINAL_INSTALL_DIR $LDFLAGS"
 
   #####
   # mlt
-  CONFIG[1]="./configure --prefix=$FINAL_INSTALL_DIR --enable-gpl --enable-linsys --swig-languages=python"
+  CONFIG[1]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR --enable-gpl --enable-linsys --swig-languages=python"
   # Remember, if adding more of these, to update the post-configure check.
   [ "$TARGET_OS" = "Darwin" ] && CONFIG[1]="${CONFIG[1]} --disable-jackrack"
   if test "1" = "$MLT_DISABLE_SOX" ; then
@@ -412,7 +413,7 @@ function set_globals {
   CFLAGS_[1]="-I$FINAL_INSTALL_DIR/include $CFLAGS"
   # Temporary patch until makefile for MLT corrected?
   #CFLAGS_[1]="${CFLAGS_[1]} -I$FINAL_INSTALL_DIR/include/libavcodec/ -I$FINAL_INSTALL_DIR/include/libavformat/ -I$FINAL_INSTALL_DIR/include/libswscale/ -I$FINAL_INSTALL_DIR/include/libavdevice"
-  LDFLAGS_[1]="-L$FINAL_INSTALL_DIR/lib $LDFLAGS"
+  LDFLAGS_[1]="-L$FINAL_INSTALL_DIR $LDFLAGS"
   # Note in the above, that we always looks for frei0r. User can do own install
   # it will be picked up.
 
@@ -424,20 +425,20 @@ function set_globals {
   
   ####
   # frei0r
-  CONFIG[3]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR/lib"
+  CONFIG[3]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR"
   CFLAGS_[3]=$CFLAGS
   LDFLAGS_[3]=$LDFLAGS
 
   ####
   # x264
-  CONFIG[4]="./configure --prefix=$FINAL_INSTALL_DIR --disable-lavf --disable-ffms --disable-gpac --disable-swscale --enable-shared"
+  CONFIG[4]="./configure --prefix=$FINAL_INSTALL_DIR  --libdir=$FINAL_INSTALL_DIR  --disable-lavf --disable-ffms --disable-gpac --disable-swscale --enable-shared"
   CFLAGS_[4]=$CFLAGS
   [ "$TARGET_OS" = "Darwin" ] && CFLAGS_[4]="-I. -fno-common -read_only_relocs suppress ${CFLAGS_[4]} "
   LDFLAGS_[4]=$LDFLAGS
   
   ####
   # libvpx
-  CONFIG[5]="./configure --prefix=$FINAL_INSTALL_DIR --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests"
+  CONFIG[5]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR  --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests"
   [ "$TARGET_OS" = "Linux" ] && CONFIG[5]="${CONFIG[5]} --enable-shared"
   CFLAGS_[5]=$CFLAGS
   # [ "$TARGET_OS" = "Darwin" ] && CFLAGS_[5]="-I. -fno-common -read_only_relocs suppress ${CFLAGS_[5]} "
@@ -451,7 +452,7 @@ function set_globals {
 
   #####
   # lame
-  CONFIG[7]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR/lib --disable-decoder --disable-frontend"
+  CONFIG[7]="./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR --disable-decoder --disable-frontend"
   CFLAGS_[7]=$CFLAGS
   LDFLAGS_[7]=$LDFLAGS
 }

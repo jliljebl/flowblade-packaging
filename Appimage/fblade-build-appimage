@@ -8,11 +8,11 @@ cd $DIR
 # Build binaries using Dan's build script
 # Create dir $HOME/flowblade, copy build sciptinto it and run it
 BINARY_ROOT_DIR=$HOME/flowblade
-mkdir $BINARY_ROOT_DIR
-cp ././build-flowblade-mlt-6.4.1 $BINARY_ROOT_DIR/build-flowblade
-chmod +x $BINARY_ROOT_DIR/build-flowblade
+#mkdir $BINARY_ROOT_DIR
+#cp ././build-flowblade-mlt-6.4.1 $BINARY_ROOT_DIR/build-flowblade
+#chmod +x $BINARY_ROOT_DIR/build-flowblade
 # Build Flowblade and libs
-$BINARY_ROOT_DIR/build-flowblade
+#$BINARY_ROOT_DIR/build-flowblade
 
 
 # Recipe is available from appimage people, get it, run it.
@@ -22,20 +22,21 @@ bash -ex Recipe Flowblade
 
 # Dan's script write date named folder
 LIBS_SOURCE_DIR="$BINARY_ROOT_DIR/`date +'%Y%m%d'`"
-echo $LIBS_SOURCE_DIR
 
 
 # Copy libs and mlt.py and_mlt.so
 ./libcopy $LIBS_SOURCE_DIR
 ./mltpycopy $LIBS_SOURCE_DIR
+./libfixlinks $LIBS_SOURCE_DIR $DIR
 
 
 # Build AppImage
-cd Flowblade
+cd $DIR
+cd Flowblade 
 ./appimagetool ./Flowblade.AppDir
 
 
-echo "AppDir created."
+echo "AppImage created with new binaries."
 
 
 # Go back script dir
