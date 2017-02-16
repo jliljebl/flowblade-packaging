@@ -1,0 +1,31 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRC_DIR=$SCRIPT_DIR"/src"
+CODE_DIR=$SRC_DIR"/FFmpeg"
+
+LIB_DIR="/usr/lib/x86_64-linux-gnu"
+
+REPOLOC="git://github.com/FFmpeg/FFmpeg.git"
+REVISION="HEAD"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir $SRC_DIR
+fi
+
+if [ -d "$CODE_DIR" ]; then
+  echo "Deleting dir "$CODE_DIR
+  rm -rf $CODE_DIR 
+  mkdir $CODE_DIR
+fi
+
+cd $SRC_DIR
+
+git clone $REPOLOC
+cd $CODE_DIR
+git checkout $REVISION
+
+cd $CODE_DIR
+
+./configure --libdir=$LIB_DIR --disable-doc --disable-network --disable-ffserver --enable-gpl --enable-version3 --enable-shared --enable-debug --enable-pthreads --enable-runtime-cpudetect --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-libx264 --enable-libvpx
+make

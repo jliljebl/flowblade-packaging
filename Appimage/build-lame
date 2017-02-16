@@ -1,0 +1,29 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRC_DIR=$SCRIPT_DIR"/src"
+CODE_DIR=$SRC_DIR"/lame-RELEASE__3_99_5"
+
+LIB_DIR="/usr/lib/x86_64-linux-gnu"
+
+REPOLOC="https://github.com/rbrito/lame/archive/RELEASE__3_99_5.tar.gz"
+REVISION=
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir $SRC_DIR
+fi
+
+if [ -d "$CODE_DIR" ]; then
+  echo "Deleting dir "$CODE_DIR
+  rm -rf $CODE_DIR 
+  mkdir $CODE_DIR
+fi
+
+cd $SRC_DIR
+
+curl -L $REPOLOC | tar -xz
+
+cd $CODE_DIR
+
+./configure --libdir=$LIB_DIR --disable-decoder --disable-frontend
+make

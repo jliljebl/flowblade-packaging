@@ -1,0 +1,34 @@
+#!/bin/bash
+
+
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRC_DIR=$SCRIPT_DIR"/src"
+CODE_DIR=$SRC_DIR"/frei0r"
+
+LIB_DIR="/usr/lib/x86_64-linux-gnu"
+
+
+REPOLOC="git://github.com/dyne/frei0r.git"
+REVISION="HEAD"
+
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir $SRC_DIR
+fi
+
+if [ -d "$CODE_DIR" ]; then
+  rm -r $CODE_DIR 
+  mkdir $CODE_DIR
+fi
+
+cd $SRC_DIR
+
+git clone $REPOLOC
+git checkout $REVISION
+
+cd $CODE_DIR
+
+autoreconf -i
+./configure --libdir=$LIB_DIR
+make

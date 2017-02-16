@@ -1,0 +1,27 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRC_DIR=$SCRIPT_DIR"/src"
+CODE_DIR=$SRC_DIR"/libvpx"
+
+LIB_DIR="/usr/lib/x86_64-linux-gnu"
+
+REPOLOC="https://chromium.googlesource.com/webm/libvpx.git"
+REVISION="HEAD"
+
+if [ -d "$CODE_DIR" ]; then
+  echo "Deleting dir "$CODE_DIR
+  rm -rf $CODE_DIR 
+  mkdir $CODE_DIR
+fi
+
+cd $SRC_DIR
+
+git clone $REPOLOC
+cd $CODE_DIR
+git checkout $REVISION
+
+cd $CODE_DIR
+
+./configure --libdir=$LIB_DIR --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests
+make

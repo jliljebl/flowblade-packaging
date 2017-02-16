@@ -7,7 +7,7 @@ cd $DIR
 
 # Build binaries using Dan's build script
 # Create dir $HOME/flowblade, copy build sciptinto it and run it
-BINARY_ROOT_DIR=$HOME/flowblade
+#BINARY_ROOT_DIR=$HOME/flowblade
 #mkdir $BINARY_ROOT_DIR
 #cp ././build-flowblade-mlt-6.4.1 $BINARY_ROOT_DIR/build-flowblade
 #chmod +x $BINARY_ROOT_DIR/build-flowblade
@@ -21,7 +21,7 @@ bash -ex Recipe Flowblade
 
 
 # Dan's script write date named folder
-LIBS_SOURCE_DIR="$BINARY_ROOT_DIR/`date +'%Y%m%d'`"
+LIBS_SOURCE_DIR=$DIR"/src"
 
 
 # Copy libs and mlt.py and_mlt.so
