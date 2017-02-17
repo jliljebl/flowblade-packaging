@@ -56,11 +56,11 @@ source_so_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so')
 source_so_dot_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so.*')
 
 
-# Get source '*.so' libs
+# Get dest '*.so.' libs
 dest_so_libs = get_files_dict(DEST_ROOT_DIR, '*.so')
-# Get source '*.so.*' libs
+# Get dest '*.so.*' libs
 dest_so_dot_libs = get_files_dict(DEST_ROOT_DIR, '*.so.*')
-
+print source_so_dot_libs
 
 # Create ".so" copy pair list
 so_copy_pairs = []
@@ -87,6 +87,7 @@ source_dot_basename = so_dot_dict_with_basename_keys(source_so_dot_libs)
 dest_dot_basename = so_dot_dict_with_basename_keys(dest_so_dot_libs)
 
 for source_lib, source_lib_path in source_dot_basename.iteritems():
+    print "source_lib_path", source_lib_path
     try:
         dest_lib_path = dest_dot_basename[source_lib]
         so_dot_copy_pairs.append((source_lib_path, dest_lib_path))

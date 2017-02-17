@@ -13,18 +13,16 @@ REPOLOC="git://github.com/dyne/frei0r.git"
 REVISION="HEAD"
 
 
-if [ ! -d "$SRC_DIR" ]; then
-  mkdir $SRC_DIR
-fi
-
 if [ -d "$CODE_DIR" ]; then
-  rm -r $CODE_DIR 
+  echo "Deleting dir "$CODE_DIR
+  rm -rf $CODE_DIR 
   mkdir $CODE_DIR
 fi
 
 cd $SRC_DIR
 
 git clone $REPOLOC
+cd $CODE_DIR
 git checkout $REVISION
 
 cd $CODE_DIR

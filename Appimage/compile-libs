@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#./build-ffmpeg
+./build-frei0r
+./build-mlt
+./build-lame
+./build-vpx
+./build-x264
+
