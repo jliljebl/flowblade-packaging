@@ -25,15 +25,15 @@ LIBS_SOURCE_DIR=$DIR"/src"
 
 
 # Copy libs and mlt.py and_mlt.so
-#./libcopy $LIBS_SOURCE_DIR
-#./mltpycopy $LIBS_SOURCE_DIR
-#./libfixlinks $LIBS_SOURCE_DIR $DIR
+./libcopy $LIBS_SOURCE_DIR
+./mltpycopy $LIBS_SOURCE_DIR
+./libfixlinks $LIBS_SOURCE_DIR $DIR
 
 
 # Build AppImage
 cd $DIR
 cd Flowblade 
-#./appimagetool ./Flowblade.AppDir
+./appimagetool ./Flowblade.AppDir
 
 
 echo "AppImage created with new binaries."

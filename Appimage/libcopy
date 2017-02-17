@@ -26,14 +26,19 @@ def get_files_dict(root_folder, pattern):
 
     return files_dict 
 
+# Creates dict lib_base_name -> [] of '.s0.*" paths with the lib_base_name
 def so_dot_dict_with_basename_keys(so_dot_dict):
     new_dict = {}
 
     for lib_dot_name, path in so_dot_dict.iteritems():
         base_name_end = lib_dot_name.index("so") + 2
         lib_base_name = lib_dot_name[0:base_name_end]
-        new_dict[lib_base_name] = path
-    
+        if lib_base_name in new_dict:
+            new_dict[lib_base_name].append(path)
+        else:
+            new_dict[lib_base_name] = [] 
+            new_dict[lib_base_name].append(path)
+
     return new_dict
     
 # print dict keys alphabetized
@@ -49,6 +54,18 @@ def print_files_dict(msg, file_items):
     for f in alph_files:
         print f
 
+# print alphabetized
+def print_dot_dict_with_basename(msg, dot_dict):
+    print msg
+    
+    keys = []
+    for key, value in dot_dict.iteritems():
+        keys.append(key)
+        
+    alph_keys = sorted(keys)
+    
+    for key in alph_keys:
+        print key, dot_dict[key]
 
 # Get source '*.so' libs
 source_so_libs = get_files_dict(SOURCE_ROOT_DIR, '*.so')
@@ -86,11 +103,13 @@ so_dot_copy_pairs = []
 source_dot_basename = so_dot_dict_with_basename_keys(source_so_dot_libs)
 dest_dot_basename = so_dot_dict_with_basename_keys(dest_so_dot_libs)
 
-for source_lib, source_lib_path in source_dot_basename.iteritems():
-    print "source_lib_path", source_lib_path
+#print_dot_dict_with_basename("source_so_dot_libs", source_dot_basename)
+#print_dot_dict_with_basename("dest_dot_basename", dest_dot_basename)
+
+for source_lib_basename, source_libs in source_dot_basename.iteritems():
     try:
-        dest_lib_path = dest_dot_basename[source_lib]
-        so_dot_copy_pairs.append((source_lib_path, dest_lib_path))
+        dest_libs = dest_dot_basename[source_lib_basename]
+        so_dot_copy_pairs.append((source_libs, dest_libs))
         #print source_lib, " TO BE COPIED"
     except:
         #print source_lib, ".* NOT IS DEST"
@@ -108,32 +127,36 @@ for path_pair in so_copy_pairs:
 # Copy ".so." libs
 # Delete old  ".so." libs from dest
 print "------------------------------------------------ SO DOT LIBS"
-for path_pair in so_dot_copy_pairs:
-    source_path, dest_path = path_pair
-    os.remove(dest_path)
-    print "DELETED: ", dest_path
-    source_folder, source_name = os.path.split(source_path)
-    dest_folder, dest_name = os.path.split(dest_path)
-    new_dest_path = dest_folder + "/" + source_name
-    shutil.copyfile(source_path, new_dest_path)
-    print "COPIED: ", source_path, " -> ", new_dest_path
+for libs_pair in so_dot_copy_pairs:
+    source_libs, dest_libs = libs_pair
+    for dest_lib_path in dest_libs:
+        os.remove(dest_lib_path)
+        print "DELETED: ", dest_lib_path
+
+    dest_folder, dest_name = os.path.split(dest_libs[0])
+    for source_lib_path in source_libs:
+        source_folder, source_name = os.path.split(source_lib_path)
+        new_dest_path = dest_folder + "/" + source_name
+        shutil.copyfile(source_lib_path, new_dest_path)
+        print "COPIED: ", source_lib_path, " -> ", new_dest_path
     
     
 # libavfilter.so .* are new libswresample.so .* are new libraries, not present dest maybe
-avfilter_source_path = source_dot_basename["libavfilter.so"]
-swresample_source_path = source_dot_basename["libswresample.so"]
+#print source_dot_basename["libavfilter.so"]
+#avfilter_source_base, av_lib = source_dot_basename["libavfilter.so"]
+#swresample_source_base, swr_libs = source_dot_basename["libswresample.so"]
 
-aw_folder, aw_name = os.path.split(avfilter_source_path)
-swr_folder, swr_name = os.path.split(swresample_source_path)
+aw_folder, aw_name = os.path.split(source_dot_basename["libavfilter.so"][0])
+swr_folder, swr_name = os.path.split(source_dot_basename["libswresample.so"][0])
 DEST_NEW_LIB_FOLDER = DEST_ROOT_DIR + "/usr/lib/x86_64-linux-gnu/"
 aw_dest = DEST_NEW_LIB_FOLDER + aw_name
-swr_dest = DEST_NEW_LIB_FOLDER +  swr_name
+swr_dest = DEST_NEW_LIB_FOLDER + swr_name
 
 print "------------------------------------------------ NEW LIBS"
-print "COPIED: ", avfilter_source_path, " -> ", aw_dest
-print "COPIED: ", swresample_source_path, " -> ", swr_dest
-shutil.copyfile(avfilter_source_path, aw_dest)
-shutil.copyfile(swresample_source_path, swr_dest)
+print "COPIED: ", source_dot_basename["libavfilter.so"][0], " -> ", aw_dest
+print "COPIED: ", source_dot_basename["libswresample.so"][0], " -> ", swr_dest
+shutil.copyfile(source_dot_basename["libavfilter.so"][0], aw_dest)
+shutil.copyfile(source_dot_basename["libswresample.so"][0], swr_dest)
 
 """
 def get
