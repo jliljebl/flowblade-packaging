@@ -1,10 +1,11 @@
 #!/bin/bash
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BUILD_DIR=$SCRIPT_DIR"/build"
+LIB_DIR=$BUILD_DIR"/lib"
+INCLUDE_DIR=$BUILD_DIR"/include"
 SRC_DIR=$SCRIPT_DIR"/src"
 CODE_DIR=$SRC_DIR"/lame-RELEASE__3_99_5"
-
-LIB_DIR="/usr/lib/x86_64-linux-gnu"
 
 REPOLOC="https://github.com/rbrito/lame/archive/RELEASE__3_99_5.tar.gz"
 REVISION=
@@ -25,5 +26,10 @@ curl -L $REPOLOC | tar -xz
 
 cd $CODE_DIR
 
-./configure --libdir=$LIB_DIR --disable-decoder --disable-frontend
+export CFLAGS="-I$INCLUDE_DIR"
+export LDFLAGS="-L$LIB_DIR"
+export PKG_CONFIG_PATH="$BUILD_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+./configure --prefix=$BUILD_DIR --libdir=$BUILD_DIR/lib --disable-decoder --disable-frontend
 make
+make install

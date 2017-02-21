@@ -104,7 +104,7 @@ source_dot_basename = so_dot_dict_with_basename_keys(source_so_dot_libs)
 dest_dot_basename = so_dot_dict_with_basename_keys(dest_so_dot_libs)
 
 #print_dot_dict_with_basename("source_so_dot_libs", source_dot_basename)
-#print_dot_dict_with_basename("dest_dot_basename", dest_dot_basename)
+print_dot_dict_with_basename("dest_dot_basename", dest_dot_basename)
 
 for source_lib_basename, source_libs in source_dot_basename.iteritems():
     try:

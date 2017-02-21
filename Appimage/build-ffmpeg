@@ -1,11 +1,11 @@
 #!/bin/bash
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BUILD_DIR=$SCRIPT_DIR"/build"
+LIB_DIR=$BUILD_DIR"/lib"
+INCLUDE_DIR=$BUILD_DIR"/include"
 SRC_DIR=$SCRIPT_DIR"/src"
 CODE_DIR=$SRC_DIR"/FFmpeg"
-
-LIB_DIR="/usr/lib/x86_64-linux-gnu"
-
 REPOLOC="git://github.com/FFmpeg/FFmpeg.git"
 REVISION="HEAD"
 
@@ -27,5 +27,10 @@ git checkout $REVISION
 
 cd $CODE_DIR
 
-./configure --libdir=$LIB_DIR --disable-doc --disable-network --disable-ffserver --enable-gpl --enable-version3 --enable-shared --enable-debug --enable-pthreads --enable-runtime-cpudetect --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-libx264 --enable-libvpx
+export CFLAGS="-I$INCLUDE_DIR"
+export LDFLAGS="-L$LIB_DIR"
+export PKG_CONFIG_PATH="$BUILD_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+./configure --prefix=$BUILD_DIR --disable-doc --disable-network --disable-ffserver --enable-gpl --enable-version3 --enable-shared --enable-debug --enable-pthreads --enable-runtime-cpudetect --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-libx264 --enable-libvpx
 make
+make install
