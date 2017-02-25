@@ -1,10 +1,5 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD_DIR=$SCRIPT_DIR"/build"
-LIB_DIR=$BUILD_DIR"/lib"
-INCLUDE_DIR=$BUILD_DIR"/include"
-SRC_DIR=$SCRIPT_DIR"/src"
 CODE_DIR=$SRC_DIR"/libvpx"
 
 REPOLOC="https://chromium.googlesource.com/webm/libvpx.git"
@@ -26,8 +21,7 @@ cd $CODE_DIR
 
 export CFLAGS="-I$INCLUDE_DIR"
 export LDFLAGS="-L$LIB_DIR"
-export PKG_CONFIG_PATH="$BUILD_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-./configure --prefix=$BUILD_DIR --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests --enable-shared
+./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests --enable-shared
 make
 make install

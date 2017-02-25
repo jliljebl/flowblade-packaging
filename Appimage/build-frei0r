@@ -1,19 +1,10 @@
 #!/bin/bash
 
-
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD_DIR=$SCRIPT_DIR"/build"
-LIB_DIR=$BUILD_DIR"/lib"
-INCLUDE_DIR=$BUILD_DIR"/include"
-SRC_DIR=$SCRIPT_DIR"/src"
 CODE_DIR=$SRC_DIR"/frei0r"
 
 REPOLOC="git://github.com/dyne/frei0r.git"
 REVISION="HEAD"
 
-if [ ! -d "$SRC_DIR" ]; then
-  mkdir $SRC_DIR
-fi
 
 if [ -d "$CODE_DIR" ]; then
   echo "Deleting dir "$CODE_DIR
@@ -29,9 +20,8 @@ git checkout $REVISION
 
 export CFLAGS="-I$INCLUDE_DIR"
 export LDFLAGS="-L$LIB_DIR"
-export PKG_CONFIG_PATH="$BUILD_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 autoreconf -i
-./configure --prefix=$BUILD_DIR --libdir=$LIB_DIR
+./configure --prefix=$FREIOR_DIR --libdir=$FREIOR_DIR
 make
 make install

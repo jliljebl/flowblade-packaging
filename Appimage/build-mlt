@@ -1,18 +1,9 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD_DIR=$SCRIPT_DIR"/build"
-LIB_DIR=$BUILD_DIR"/lib"
-INCLUDE_DIR=$BUILD_DIR"/include"
-SRC_DIR=$SCRIPT_DIR"/src"
 CODE_DIR=$SRC_DIR"/mlt"
 
 REPOLOC="git://github.com/mltframework/mlt.git"
 REVISION="e8325f5e9acce9c41b3e91d7b587a41c91b8d0d7" # 6.4.1
-
-if [ ! -d "$SRC_DIR" ]; then
-  mkdir $SRC_DIR
-fi
 
 if [ -d "$CODE_DIR" ]; then
   echo "Deleting dir "$CODE_DIR
@@ -30,8 +21,7 @@ cd $CODE_DIR
 
 export CFLAGS="-I$INCLUDE_DIR"
 export LDFLAGS="-L$LIB_DIR"
-export PKG_CONFIG_PATH="$BUILD_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-./configure --prefix=$BUILD_DIR  --enable-gpl --enable-linsys --swig-languages=python
+./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR --enable-gpl --enable-linsys --swig-languages=python
 make
 make install

@@ -1,10 +1,5 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD_DIR=$SCRIPT_DIR"/build"
-LIB_DIR=$BUILD_DIR"/lib"
-INCLUDE_DIR=$BUILD_DIR"/include"
-SRC_DIR=$SCRIPT_DIR"/src"
 CODE_DIR=$SRC_DIR"/x264"
 
 REPOLOC="git://repo.or.cz/x264.git"
@@ -22,10 +17,12 @@ git clone $REPOLOC
 cd $CODE_DIR
 git checkout $REVISION
 
-export CFLAGS="-I$INCLUDE_DIR"
-export LDFLAGS="-L$LIB_DIR"
-export PKG_CONFIG_PATH="$BUILD_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
+FINAL_LIB_DIR=$FINAL_INSTALL_DIR"/x64-10bit"
 
-./configure --prefix=$BUILD_DIR --disable-lavf --disable-ffms --disable-gpac --disable-swscale --enable-shared
+export CFLAGS="-I$INCLUDE_DIR"
+export LDFLAGS="-L$FINAL_LIB_DIR"
+
+
+./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_LIB_DIR  --disable-lavf --disable-ffms --disable-gpac --disable-swscale --enable-shared
 make
 make install

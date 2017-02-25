@@ -4,14 +4,11 @@ export CFLAGS=
 export CXXFLAGS=
 export LDFLAGS=
 
-#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-#export PKG_CONFIG_PATH="$DIR/pkgconfig:$PKG_CONFIG_PATH"
-
-./build-ffmpeg
-./build-frei0r
-./build-mlt
+#./build-ffmpeg
+#./build-frei0r
+#./build-mlt
 ./build-x264
-./build-vpx
+#./build-vpx
 ./build-lame
 
 

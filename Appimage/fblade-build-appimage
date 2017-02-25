@@ -4,6 +4,24 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
+# Export build dirs and create
+export SCRIPT_DIR=$DIR
+export SRC_DIR=$SCRIPT_DIR"/src"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir $SRC_DIR
+fi
+
+INSTALL_ROOT_DIR=$DIR
+USR_LIB_DIR="/usr/lib/x86_64-linux-gnu"
+export FINAL_INSTALL_DIR=$INSTALL_ROOT_DIR$USR_LIB_DIR
+echo $FINAL_INSTALL_DIR
+
+export INCLUDE_DIR=$FINAL_INSTALL_DIR"/include"
+export LIB_DIR=$FINAL_INSTALL_DIR
+export FREIOR_DIR=$INSTALL_ROOT_DIR"/usr/lib"
+export PKG_CONFIG_PATH="$FINAL_INSTALL_DIR/pkgconfig:$PKG_CONFIG_PATH"
+
 # Compile libs
 #$DIR/compile-libs
 
@@ -14,7 +32,7 @@ bash -ex Recipe Flowblade
 
 
 # Binaries are installed in 
-LIBS_SOURCE_DIR=$DIR"/build/lib"
+LIBS_SOURCE_DIR=$FINAL_INSTALL_DIR
 
 
 # Copy libs and mlt.py and_mlt.so
@@ -23,7 +41,7 @@ LIBS_SOURCE_DIR=$DIR"/build/lib"
 ./libfixlinks $LIBS_SOURCE_DIR $DIR > l3
 
 
-# Build AppImage
+# Build AppImage with new binaries
 cd $DIR
 cd Flowblade 
 ./appimagetool ./Flowblade.AppDir
