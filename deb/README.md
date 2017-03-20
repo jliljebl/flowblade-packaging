@@ -6,7 +6,7 @@
   * builds package
 
 
-##Resources
+## Resources
 */DEBIAN CONTENTS*
 
 */USR_CONTENTS*
