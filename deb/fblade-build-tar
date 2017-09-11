@@ -3,7 +3,7 @@
 CODE_SOURCE_DIR="/home/janne/codes/flowblade"
 WORK_DIR="/home/janne/codes/debs/PACKAGING/deb_packing/tarbuild"
 APP_ROOT="/flowblade/flowblade/flowblade-trunk"
-VERSION="1.4.0"
+VERSION="1.14.0"
 PACKAGE_NAME="flowblade-"$VERSION
 DIST_TAR=$PACKAGE_NAME".tar.gz"
 
