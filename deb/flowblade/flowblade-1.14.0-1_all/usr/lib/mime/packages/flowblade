@@ -1,1 +1,0 @@
-application/vnd.flowblade-project; /usr/bin/flowblade '%s'; test=test -n "$DISPLAY"; priority=5

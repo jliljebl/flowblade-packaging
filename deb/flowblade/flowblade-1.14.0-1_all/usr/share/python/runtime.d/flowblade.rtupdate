@@ -1,6 +1,0 @@
-#! /bin/sh
-set -e
-if [ "$1" = rtupdate ]; then
-	pyclean -p flowblade /usr/share/flowblade
-	pycompile -p flowblade  /usr/share/flowblade
-fi
