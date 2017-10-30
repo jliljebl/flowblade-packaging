@@ -20,4 +20,5 @@ mlt.py
 /stash/Appimage/build
 /stash/Appimage/src
 /stash/Appimage/usr
+/stash/Appimage/out
 /deb/flowblade
