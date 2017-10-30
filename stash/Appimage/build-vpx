@@ -1,0 +1,27 @@
+#!/bin/bash
+
+CODE_DIR=$SRC_DIR"/libvpx"
+
+REPOLOC="https://chromium.googlesource.com/webm/libvpx.git"
+REVISION="HEAD"
+
+if [ -d "$CODE_DIR" ]; then
+  echo "Deleting dir "$CODE_DIR
+  rm -rf $CODE_DIR 
+  mkdir $CODE_DIR
+fi
+
+cd $SRC_DIR
+
+git clone $REPOLOC
+cd $CODE_DIR
+git checkout $REVISION
+
+cd $CODE_DIR
+
+export CFLAGS="-I$INCLUDE_DIR"
+export LDFLAGS="-L$LIB_DIR"
+
+./configure --prefix=$FINAL_INSTALL_DIR --libdir=$FINAL_INSTALL_DIR --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests --enable-shared
+make
+make install

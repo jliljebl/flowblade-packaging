@@ -1,0 +1,1 @@
+sudo apt-get install git automake autoconf libtool intltool g++ yasm swig libmp3lame-dev libgavl-dev libsamplerate-dev libxml2-dev ladspa-sdk libjack-dev libsox-dev libsdl-dev libgtk2.0-dev liboil-dev libsoup2.4-dev libqt4-dev libexif-dev libtheora-dev libvdpau-dev libvorbis-dev python-dev mercurial python-cairo python-numpy python-gnome2 kdelibs5-dev libvpx-dev libx264-dev

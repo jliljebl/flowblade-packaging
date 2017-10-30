@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function get_appimage_tool() {
+	wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+	chmod +x appimagetool-x86_64.AppImage
+}
+
+function install_base_system_dependencies() {
+	sudo apt install gcc g++ automake libtool pkg-config git autoconf intltool yasm swig unionfs-fuse nasm
+}
+
+function init_temp_env() {
+	sudo ./tempenv.sh setup
+	sudo ./tempenv.sh start
+}
+
+function install_mlt_build_dependencies() {
+	# goes in temp env because no 'sudo' 
+	apt install libmp3lame-dev libgavl-dev libsamplerate-dev libxml2-dev ladspa-sdk libjack-dev libsox-dev libsdl-dev libgtk2.0-dev libsoup2.4-dev libqt4-dev libexif-dev libtheora-dev libvdpau-dev libvorbis-dev python-dev mercurial python-cairo python-numpy python-gnome2 kdelibs5-dev
+}
+
+cd "$(dirname "$0")"
+
+#if [[ $EUID -ne 0 ]]; then
+#	echo "Must be run as root"
+#	exit 1
+#fi
+
+case "$1" in
+	"get-appimgtool")
+		get_appimage_tool
+		;;
+	"init-tempenv")
+		init_temp_env
+		;;
+	"install-mltdeps")
+		install_mlt_build_dependencies
+		;;
+	"install-base")
+		install_base_system_dependencies
+		;;
+	*)
+		echo "Unknown command: $1"
+		;;
+esac

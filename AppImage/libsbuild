@@ -1,0 +1,212 @@
+#!/bin/bash
+
+
+function clone_new_git() {
+
+	if [ -d "$CODE_DIR" ]; then
+	  echo "Deleting dir "$CODE_DIR
+	  rm -rf $CODE_DIR 
+	  mkdir $CODE_DIR
+	fi
+
+	cd $SRC_DIR
+
+	git clone $REPOLOC
+	cd $CODE_DIR
+	git checkout $REVISION
+
+	cd $CODE_DIR
+}
+
+# ----------------------------------------- vpx
+function build_vpx() {
+
+	CODE_DIR=$SRC_DIR"/libvpx"
+
+	REPOLOC="https://chromium.googlesource.com/webm/libvpx.git"
+	REVISION="HEAD"
+
+	clone_new_git
+
+	CFLAGS="-I$INCLUDE_DIR"
+	LDFLAGS="-L$USR_LIB_DIR"
+
+	echo $FINAL_INSTALL_DIR
+
+	./configure --prefix="/usr" --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests --enable-shared
+	make
+	make install
+}
+
+# ----------------------------------------- x264
+function build_x264 () {
+	CODE_DIR=$SRC_DIR"/x264"
+
+	REPOLOC="git://repo.or.cz/x264.git"
+	REVISION="HEAD"
+
+	clone_new_git
+
+	CFLAGS="-I$INCLUDE_DIR"
+	LDFLAGS="-L$USR_LIB_DIR"
+
+	./configure  --prefix="/usr" --libdir="/usr/lib" --disable-lavf --disable-ffms --disable-gpac --disable-swscale --enable-shared
+	make
+	make install
+}
+# ----------------------------------------- frei0r
+function build_frei0r () {
+	CODE_DIR=$SRC_DIR"/frei0r"
+
+	REPOLOC="git://github.com/dyne/frei0r.git"
+	REVISION="HEAD"
+
+	clone_new_git
+
+	CFLAGS="-I$INCLUDE_DIR"
+	LDFLAGS="-L$LIB_DIR"
+
+	autoreconf -i
+	./configure --prefix="/usr/lib" --libdir="/usr/lib"
+	make
+	make install
+}
+
+# ----------------------------------------- ffmpeg
+function ffmpeg_paths() {
+	cd $DIR
+
+	CODE_DIR=$SRC_DIR"/FFmpeg"
+
+	REPOLOC="git://github.com/FFmpeg/FFmpeg.git"
+	REVISION="01e291a"
+}
+
+function ffmpeg_compile() {
+	ffmpeg_paths
+
+	cd $CODE_DIR
+
+	CFLAGS="-I$INCLUDE_DIR"
+	LDFLAGS="-L$USR_LIB_DIR"
+	./configure --prefix="/usr" --disable-doc --disable-network --disable-ffserver --enable-gpl --enable-version3 --enable-shared --enable-debug --enable-pthreads --enable-runtime-cpudetect --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-libx264 --enable-libvpx
+	make
+	make install
+}
+
+# ------------------------------------------ lame
+function build_lame () {
+	CODE_DIR=$SRC_DIR"/deprecated-lame-mirror-RELEASE__3_99_5"
+
+	REPOLOC="https://github.com/rbrito/lame/archive/RELEASE__3_99_5.tar.gz"
+	REVISION=
+
+	if [ ! -d "$SRC_DIR" ]; then
+	  mkdir $SRC_DIR
+	fi
+
+	if [ -d "$CODE_DIR" ]; then
+	  echo "Deleting dir "$CODE_DIR
+	  rm -rf $CODE_DIR 
+	  mkdir $CODE_DIR
+	fi
+
+	cd $SRC_DIR
+
+	curl -L $REPOLOC | tar -xz
+
+	cd $CODE_DIR
+
+	CFLAGS="-I$INCLUDE_DIR"
+	LDFLAGS="-L$LIB_DIR"
+
+	./configure --prefix="/usr" --disable-decoder --disable-frontend
+	make
+	make install
+}
+
+# ------------------------------------------ mlt
+function build_mlt () {
+
+	CODE_DIR=$SRC_DIR"/mlt"
+
+	REPOLOC="git://github.com/mltframework/mlt.git"
+	#REVISION=
+	REVISION="e8325f5e9acce9c41b3e91d7b587a41c91b8d0d7" # 6.4.1
+
+	clone_new_git
+
+	#[mltframework/mlt] mlt_property.h: Replace include xlocale.h by locale.h (#248) 
+	#Andreas Müller <notifications@github.com>
+	#to mltframework/m., Subscribed 
+	#xlocale.h was removed in glibc 2.26
+	sed -i '34s/.*/#include <locale.h>/' $CODE_DIR"/src/framework/mlt_property.h"
+
+	CFLAGS="-I$INCLUDE_DIR"
+	LDFLAGS="-L$LIB_DIR"
+
+	./configure --prefix="/usr/lib" --libdir="/usr/lib" --enable-gpl --enable-linsys --swig-languages=python
+	make
+	make install
+}
+
+# -------------------------------------- init
+# Make sure were in script dir
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR=$DIR
+SRC_DIR=$SCRIPT_DIR"/src"
+
+mkdir -p $SRC_DIR
+
+USR_LIB_DIR="/usr/lib"
+INCLUDE_DIR="/usr/include"
+LIB_DIR=$USR_LIB_DIR
+
+export CFLAGS=
+export CXXFLAGS=
+export LDFLAGS=
+
+case "$1" in
+	"ffmpeg")
+		ffmpeg_paths
+		clone_new_git
+		ffmpeg_compile
+		;;
+	"ffmpeg-load")
+		ffmpeg_paths
+		clone_new_git
+		;;
+	"ffmpeg-compile")
+		ffmpeg_compile
+		;;
+	"vpx")
+		build_vpx
+		;;
+	"x264")
+		build_x264
+		;;
+	"lame")
+		build_lame
+		;;
+	"frei0r")
+		build_frei0r
+		;;
+	"mlt")
+		build_mlt
+		;;
+	"build-all")
+		build_vpx
+		build_x264
+		build_lame
+		build_frei0r
+
+		ffmpeg_paths
+		clone_new_git
+		ffmpeg_compile
+
+		build_mlt
+		;;
+	*)
+		echo "Unknown command: $1"
+		;;
+esac

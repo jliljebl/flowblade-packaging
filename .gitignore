@@ -12,11 +12,12 @@ mlt.py
 *.py~
 *.pot~
 
-/Appimage/out
-/Appimage/Flowblade
-/Appimage/Flowblade(copy)
-/Appimage/stuff
-/Appimage/build
-/Appimage/src
-/Appimage/usr
+/AppImage/tempenv
+/AppImage/appimagetool-x86_64.AppImage
+/stash/Appimage/Flowblade
+/stash/Appimage/Flowblade(copy)
+/stash/Appimage/stuff
+/stash/Appimage/build
+/stash/Appimage/src
+/stash/Appimage/usr
 /deb/flowblade
