@@ -2,7 +2,7 @@
 
 ### Steps
 
-#### Setup
+### 1) Setup
 **git clone https://github.com/jliljebl/flowblade-packaging.git** Download this repo.
 
 **cd <CLONE_DIR>/flowblade-packaging/AppImage** Go to AppImage folder.
@@ -13,7 +13,7 @@
 
 **./tempenv.sh setup** Sets up union-fs tempenv needed to create AppImage.
 
-#### Working in tempenv
+### 2) Working in tempenv
 **./tempenv.sh start** Starts up union-fs file system.
 
 Now you need to navigete back to *<CLONE_DIR>/flowblade-packaging/AppImage* in the chroot file system you are in.
