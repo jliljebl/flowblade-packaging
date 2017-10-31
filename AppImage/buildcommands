@@ -5,14 +5,54 @@ function get_appimage_tool() {
 	chmod +x appimagetool-x86_64.AppImage
 }
 
+# Download AppRun and make it executable
+function get_apprun()
+{
+  wget -c https://github.com/probonopd/AppImageKit/releases/download/6/AppRun_6-x86_64 -O AppRun # 64-bit
+}
+
 function install_base_system_dependencies() {
-	sudo apt install gcc g++ automake libtool pkg-config git autoconf intltool yasm swig unionfs-fuse nasm
+	sudo apt install gcc g++ automake libtool pkg-config git autoconf intltool yasm swig unionfs-fuse nasm wget grep sed cut
 }
 
 function init_temp_env() {
 	sudo ./tempenv.sh setup
 	sudo ./tempenv.sh start
 }
+
+#! /bin/bash
+function download_package () {
+	PACKAGE=$2
+	URI=`apt-cache show $PACKAGE | grep "Filename:" | cut -f 2 -d " "`
+	echo $URI
+	wget http://archive.ubuntu.com/ubuntu/$URI
+}
+
+function download_debs () {
+	mkdir debs
+	cd debs
+
+	for DEB in "${DEBS[@]}"
+	do
+	   : 
+		echo "downloading $DEB" 
+		apt-get download $DEB
+	done
+}
+
+function install_flowlade_debs () {
+	cd debs
+	FILES=$PWD/*
+	for f in $FILES
+	do
+		echo "Installing $f..."
+		sudo dpkg -i $f
+	  # take action on each file. $f store current file name
+	  #cat $f
+	done
+
+}
+
 
 function install_mlt_build_dependencies() {
 	# goes in temp env because no 'sudo' 
@@ -26,9 +66,14 @@ cd "$(dirname "$0")"
 #	exit 1
 #fi
 
+DEBS=(python-cairo python-gi-cairo python-gi python-numpy python-mlt librsvg2-common swh-plugins python python-dbus python-pil gmic gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-pango-1.0 gir1.2-gdkpixbuf-2.0)
+
 case "$1" in
 	"get-appimgtool")
 		get_appimage_tool
+		;;
+	"get-apprun")
+		get_apprun
 		;;
 	"init-tempenv")
 		init_temp_env
@@ -39,6 +84,16 @@ case "$1" in
 	"install-base")
 		install_base_system_dependencies
 		;;
+	"download-package")
+		download_package
+		;;
+	"download-flowblade-debs")
+		download_debs
+		;;
+	"install-flowblade-debs")
+		install_flowlade_debs
+		;;
+
 	*)
 		echo "Unknown command: $1"
 		;;
