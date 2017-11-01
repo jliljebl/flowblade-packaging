@@ -13,6 +13,9 @@ mlt.py
 *.pot~
 
 /AppImage/tempenv
+/AppImage/Flowblade
+/AppImage/out
+/AppImage/Packages.gz
 /AppImage/appimagetool-x86_64.AppImage
 /stash/Appimage/Flowblade
 /stash/Appimage/Flowblade(copy)
