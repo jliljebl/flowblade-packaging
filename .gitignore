@@ -15,6 +15,7 @@ mlt.py
 /AppImage/tempenv
 /AppImage/Flowblade
 /AppImage/out
+/AppImage/src
 /AppImage/Packages.gz
 /AppImage/appimagetool-x86_64.AppImage
 /stash/Appimage/Flowblade

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function cd_work_dir() {
+	cd $DIR/$APP/
+}
+
 function get_appimage_tool() {
 	wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
 	chmod +x appimagetool-x86_64.AppImage
@@ -54,6 +58,72 @@ function install_flowlade_debs () {
 }
 
 
+function find_tempenv_sos () {
+
+	[ -e tempenv_so_files ] &&  rm tempenv_so_files
+	[ -e copy_libs_list ] && rm copy_libs_list
+	[ -e copy_libs_paths ] && rm copy_libs_paths
+	[ -e copy_libs_clean ] && rm copy_libs_clean
+
+	sudo find ./tempenv/files/usr -name "*.so*" > copy_libs_paths
+
+	#while read p; do
+	#  echo $p | rev | cut -d"/" -f1 | rev > tempenv_so_files_2
+	#done <tempenv_so_files
+
+	cat copy_libs_paths| while read line
+	do
+		CLEAN_LINE=${line#"./tempenv/files"}
+		echo "$CLEAN_LINE" >> copy_libs_paths_clean
+	done
+
+
+	cat copy_libs_paths| while read line
+	do
+	   echo "$line" | rev | cut -d"/" -f1 | rev >> tempenv_so_files
+	done
+
+	cat tempenv_so_files| while read line
+	do
+	   echo "${line%%.*}.so" >> copy_libs_list
+	done
+}
+
+function delete_appimg_copy_libs () {
+	cat copy_libs_list | while read line
+	do
+		echo "delete lib: $line"
+		#find $DIR"/Flowblade/Flowblade.AppDir/usr" -name "*$line*" -exec echo '{}' \;
+		find $DIR"/Flowblade/Flowblade.AppDir/usr" -name "*$line*" -exec rm -f '{}' \;
+	done
+}
+
+function copy_libs_to_appimg () {
+	cat copy_libs_paths_clean | while read line
+	do
+		echo "copying: $DIR/tempenv/files$line -> $DIR/Flowblade/Flowblade.AppDir$line"
+		cp $DIR/tempenv/files$line $DIR/Flowblade/Flowblade.AppDir$line 2>> copy_errors
+		#find $DIR"/Flowblade/Flowblade.AppDir/usr" -name "*$line*" -exec cp '{}' \;
+	done
+
+}
+
+function copy_py_bindings () {
+	# DLETING FRFOM APPIMAGE DOES NOT YET WORK!!!!!!!
+	#TARGET_PY=$DIR"/Flowblade/Flowblade.AppDir/usr/lib/python2.7/dist-packages/mlt.py"
+	#TAREGT_OLD_LIB=$DIR"/Flowblade/Flowblade.AppDir/usr/lib/python2.7/dist-packages/_mlt.so"
+
+	#[ -e $TARGET_PY ] && rm $TARGET_PY
+	#[ -e $TAREGT_OLD_LIB ] && rm $TAREGT_OLD_LIB
+	cp $DIR"/src/mlt/src/swig/python/mlt.py" $DIR"/Flowblade/Flowblade.AppDir/usr/lib/python2.7/dist-packages/mlt.py"
+	cp $DIR"/src/mlt/src/swig/python/_mlt.so" $DIR"/Flowblade/Flowblade.AppDir/usr/lib/python2.7/dist-packages/_mlt.so"
+
+}
+
+function copy_mlt_folder () {
+	cp -r  $DIR"/tempenv/files/usr/lib/mlt" $DIR"/Flowblade/Flowblade.AppDir/usr/lib/"
+}
+
 function install_mlt_build_dependencies() {
 	# goes in temp env because no 'sudo' 
 	apt install libmp3lame-dev libgavl-dev libsamplerate-dev libxml2-dev ladspa-sdk libjack-dev libsox-dev libsdl-dev libgtk2.0-dev libsoup2.4-dev libqt4-dev libexif-dev libtheora-dev libvdpau-dev libvorbis-dev python-dev mercurial python-cairo python-numpy python-gnome2 kdelibs5-dev
@@ -61,6 +131,12 @@ function install_mlt_build_dependencies() {
 
 cd "$(dirname "$0")"
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+APP="Flowblade"
+
+# Halt on errors
+#set -e
+#set -x
 #if [[ $EUID -ne 0 ]]; then
 #	echo "Must be run as root"
 #	exit 1
@@ -93,7 +169,28 @@ case "$1" in
 	"install-flowblade-debs")
 		install_flowlade_debs
 		;;
-
+	"find-tempenv-sos")
+		find_tempenv_sos
+		;;
+	"delete-appimg-sos")
+		delete_appimg_copy_libs
+		;;
+	"copy-libs-to-appimg")
+		copy_libs_to_appimg
+		;;
+	"copy-mlt-folder")
+		copy_mlt_folder
+		;;
+	"copy-py-bindings")
+		copy_py_bindings
+		;;
+	"run-full-libs-copy")
+		find_tempenv_sos
+		delete_appimg_copy_libs
+		copy_libs_to_appimg
+		copy_mlt_folder
+		copy_py_bindings
+		;;
 	*)
 		echo "Unknown command: $1"
 		;;

@@ -12,7 +12,6 @@ function get_version() {
   echo $VERSION
 }
 
-
 function create_work_dir() {
 	# Create .AppDir/usr/lib and move to app folder
 	mkdir -p ./$APP/$APP.AppDir/usr/lib
@@ -60,6 +59,7 @@ function generate_status() {
 	mkdir -p ./tmp/lists/partial
 	touch tmp/pkgcache.bin tmp/srcpkgcache.bin
 	wget -q -c "https://github.com/AppImage/AppImages/raw/master/excludedeblist"
+	#cp ../excludedeblist ./excludedeblist
 	rm status 2>/dev/null || true
 	for PACKAGE in $(cat excludedeblist | cut -d "#" -f 1) ; do
 	printf "Package: $PACKAGE\nStatus: install ok installed\nArchitecture: all\nVersion: 9:999.999.999\n\n" >> status
@@ -90,20 +90,35 @@ function download_flowblade_deb () {
 }
 
 function download_dependencies_debs () {
+	  cd_work_dir
+
 	  dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
 	  echo "deb file:$(readlink -e $PWD) ./" >> sources.list
 
 	  INSTALL=$LOWERAPP
 
-	  apt-get $OPTIONS update || true
+	  apt-get $OPTIONS update || true > /home/janne/libs
 	
-
 	  URLS=$(apt-get $OPTIONS -y install --print-uris $INSTALL | cut -d "'" -f 2 | grep -e "^http")
 	  for URL in $URLS ; do
 	    if [ ! -f $(basename "$URL") ] ; then
 	      wget -c $URL
 	    fi
 	  done
+}
+
+function download_extra_debs () {
+	cd_work_dir
+
+	for DEB in "${EXTRA_DEBS[@]}"
+	do
+	   : 
+		echo "downloading $DEB"
+		
+		apt-get $OPTIONS download $DEB
+		apt-get $OPTIONS  -s install $DEB
+	done
+
 }
 
 function delete_blacklisted_and_developer_files() {
@@ -123,7 +138,11 @@ function delete_blacklisted_and_developer_files() {
 	rm -rf usr/include || true
 	rm -rf usr/lib/cmake || true
 	rm -rf usr/lib/pkgconfig || true
-	find . -name '*.la' | xargs -i rm {}
+	rm -rf usr/share/doc || true
+	#find . -name '*.la' | xargs -i rm {}
+
+	#find . -name "*harfbuzz*" -exec rm -rf {} \;
+	find . -name *harfbuzz* -delete
 }
 
 
@@ -159,6 +178,7 @@ cd_app_dir
 cat > AppRun <<\EOF
 #!/bin/sh
 HERE="$(dirname "$(readlink -f "${0}")")"
+echo "Apprun HERE:"$HERE
 export UNION_PRELOAD="${HERE}"
 export LD_PRELOAD="${HERE}/libunionpreload.so"
 export PATH="${HERE}"/usr/bin/:"${HERE}"/usr/sbin/:"${HERE}"/usr/games/:"${HERE}"/bin/:"${HERE}"/sbin/:"${PATH}"
@@ -265,12 +285,27 @@ function get_desktopintegration()
   sed -i -e "s|^Exec=$REALBIN|Exec=$REALBIN.wrapper|g" flowblade.desktop
 }
 
-function fix_desktop_files_and_Python_imports () {
+function fix_desktop_files_and_python_imports () {
 # Fix desktop files that have file endings for icons
 sed -i -e 's|\.png||g' *.desktop || true
 sed -i -e 's|\.svg||g' *.desktop || true
 sed -i -e 's|\.svgz||g' *.desktop || true
 sed -i -e 's|\.xpm||g' *.desktop || true
+
+# Fix Python imports,
+# https://github.com/probonopd/AppImages/issues/172
+#SITECUSTOMIZEFILES=$(find . -type f -name "sitecustomize.py")
+#echo "$SITECUSTOMIZEFILES"$SITECUSTOMIZEFILES
+#for SITECUSTOMIZEFILE in $SITECUSTOMIZEFILES ; do
+#echo "$SITECUSTOMIZEFILE$"$SITECUSTOMIZEFILE
+
+#SITECUSTOMIZEFILE=$DIR/$APP/$APP.AppDir/usr/lib/python2.7/sitecustomize.py
+#rm $SITECUSTOMIZEFILE
+#cat > $SITECUSTOMIZEFILE <<\EOF
+#import sys,os
+#prefix = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(sys.path[0]))))
+#sys.path = [ prefix+s for s in sys.path if not s.startswith(prefix) ]
+#EOF
 
 # Fix Python imports,
 # https://github.com/probonopd/AppImages/issues/172
@@ -282,6 +317,7 @@ prefix = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(sys.pat
 sys.path = [ prefix+s for s in sys.path if not s.startswith(prefix) ]
 EOF
 done
+
 }
 
 
@@ -330,6 +366,10 @@ APP="Flowblade"
 LOWERAPP="flowblade"
 
 DEBS=(python-cairo python-gi-cairo python-gi python-numpy python-mlt librsvg2-common swh-plugins python python-dbus python-pil gmic gir1.2-glib-2.0 gir1.2-gtk-3.0 gir1.2-pango-1.0 gir1.2-gdkpixbuf-2.0)
+
+
+#EXTRA_DEBS=(libpangoft2-1.0-0 libgtk-3-0 libz-1.0-0 /usr/lib/x86_64-linux-gnu/libpng16.so.16) # libpangoft2 doesnot get installed from terget distro but gets version from host system which is wrong
+EXTRA_DEBS=(libk5crypto3)
 INGREDIENTS_SOURCES=("deb [arch=amd64] http://us.archive.ubuntu.com/ubuntu/ xenial main universe")
 
 OPTIONS="-o Debug::NoLocking=1
@@ -348,12 +388,19 @@ OPTIONS="-o Debug::NoLocking=1
 -o APT::Install-Suggests=0
 "
 
+
+# NOTES:
+# copied to /usr/lib/x86_64-linux-gnu/
+#/home/janne/codes/flowblade-packaging/flowblade-packaging/AppImage/Flowblade/Flowblade.AppDir/lib/x86_64-linux-gnu/libpng12.so.0
+#/home/janne/codes/flowblade-packaging/flowblade-packaging/AppImage/Flowblade/Flowblade.AppDir/lib/x86_64-linux-gnu/libpng12.so.0.54.0
+
 case "$1" in
 	"run-all")
 		create_work_dir
 		create_status_and_sources_list
 		download_flowblade_deb
 		download_dependencies_debs
+		download_extra_debs
 		create_app_dir
 		extract_debs
 		copy_icons
@@ -364,12 +411,19 @@ case "$1" in
 		flowblade_post_extract_fixes
 		delete_blacklisted_and_developer_files
 		get_desktopintegration
-		fix_desktop_files_and_Python_imports
+		fix_desktop_files_and_python_imports
 		generate_type2_appimage
 
 		ls -lh ../out/*.AppImage
 
 		echo "Finished"
+		;;
+
+	"build-appimage")
+		generate_type2_appimage
+		;;
+	"download-extra-debs")
+		download_extra_debs
 		;;
 	"cd-work-dir")
 		cd_work_dir
