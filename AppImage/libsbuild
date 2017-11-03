@@ -43,7 +43,7 @@ function build_x264 () {
 	CODE_DIR=$SRC_DIR"/x264"
 
 	REPOLOC="git://repo.or.cz/x264.git"
-	REVISION="HEAD"
+	REVISION="5c4728d8dd82ba46901824470db1609ae0f2521d" # old version to not require nasm 2.13
 
 	clone_new_git
 
