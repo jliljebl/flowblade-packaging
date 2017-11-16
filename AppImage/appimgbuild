@@ -87,6 +87,14 @@ function download_flowblade_deb () {
 	DLD=$(wget -q "https://github.com/jliljebl/flowblade/releases" -O - | grep _all.deb | head -n 1 | cut -d '"' -f 2)
 	echo "$DLD" | cut -d "-" -f 2 > VERSION
 	wget -c "https://github.com/$DLD"
+
+
+}
+
+function copy_flowblade_no_mlt () {
+
+	cp $DIR"/flowblade-no-mlt-1.14.0-1_all.deb" $DIR/$APP/"/flowblade-no-mlt-1.14.0-1_all.deb"
+	cd_work_dir
 }
 
 function download_dependencies_debs () {
@@ -139,12 +147,11 @@ function delete_blacklisted_and_developer_files() {
 	rm -rf usr/lib/cmake || true
 	rm -rf usr/lib/pkgconfig || true
 	rm -rf usr/share/doc || true
-	#find . -name '*.la' | xargs -i rm {}
-
-	#find . -name "*harfbuzz*" -exec rm -rf {} \;
+	
+	# These cause some conflicts 
 	find . -name *harfbuzz* -delete
+	find . -name *libkrb5support* -delete
 }
-
 
 function copy_icons () {
 	cd_app_dir
@@ -399,6 +406,7 @@ case "$1" in
 		create_work_dir
 		create_status_and_sources_list
 		download_flowblade_deb
+		#copy_flowblade_no_mlt
 		download_dependencies_debs
 		download_extra_debs
 		create_app_dir

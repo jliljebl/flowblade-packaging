@@ -24,7 +24,6 @@ function init_temp_env() {
 	sudo ./tempenv.sh start
 }
 
-#! /bin/bash
 function download_package () {
 	PACKAGE=$2
 	URI=`apt-cache show $PACKAGE | grep "Filename:" | cut -f 2 -d " "`
