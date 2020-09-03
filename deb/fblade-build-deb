@@ -4,7 +4,7 @@ CODE_ROOT_DIR="/home/janne/codes/flowblade/flowblade/flowblade-trunk"
 CODE_SOURCE_DIR=$CODE_ROOT_DIR"/Flowblade"
 
 PACKING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-VERSION="2.0.0"
+VERSION="2.6.0"
 PACKAGE_NAME="flowblade-"$VERSION
 DEB_ROOT_DIR=$PACKING_DIR"/flowblade"
 DEB_ARCHIVE_DIR=$DEB_ROOT_DIR"/"$PACKAGE_NAME"-1_all"
@@ -66,7 +66,7 @@ sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/res/render/"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/res/render/renderencoding.xml"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/tools/"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/vieweditor/"
-sudo chmod 755 $USR_DIR"/share/flowblade/flowblade-2.0.0.egg.info"
+sudo chmod 755 $USR_DIR"/share/flowblade/flowblade-2.6.0.egg.info"
 sudo chmod 755 $USR_DIR"/share/mime/packages/flowblade.xml"
 sudo chmod 755 $USR_DIR"/share/man/"
 sudo chmod 755 $USR_DIR"/share/man/man1/"
@@ -101,11 +101,15 @@ sudo find $USR_DIR"/share/flowblade/Flowblade/res/gmic" -name "*.*" -exec chmod 
 sudo find $USR_DIR"/share/flowblade/Flowblade/res/render" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/it" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/cs" -name "*.*" -exec chmod 644 {} \;
-sudo find $USR_DIR"/share/flowblade/Flowblade/locale/fi" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/hu" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/fr" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/es" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/de" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/ru" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/uk" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/pl" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/zh_CN" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/locale/zh_TW" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/Flowblade" -name "*.*" -exec chmod 644 {} \;
 
 sudo find $USR_DIR"/share/flowblade/Flowblade/res/help/developers"
@@ -125,7 +129,7 @@ sudo chmod 644 $USR_DIR"/share/menu/flowblade"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/res/help/translations"
 sudo chmod 644 $USR_DIR"/share/pixmaps/flowblade.png"
 #sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/phantom2d/build.xml"
-sudo chmod 644 $USR_DIR"/share/flowblade/flowblade-1.16.0.egg.info"
+sudo chmod 644 $USR_DIR"/share/flowblade/flowblade-2.6.0.egg.info"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/res/help/gpl3"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/locale/iso_locales"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/res/help/developers"
