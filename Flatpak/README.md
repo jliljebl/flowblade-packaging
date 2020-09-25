@@ -48,7 +48,21 @@ git merge flathub/master
 
 ...build and test local
 
+## USING LOCAL FILES FOR TEST BUILD
 
+Typical change:
+
+```bash
+    sources:
+-      - type: git
+-        url: https://github.com/jliljebl/flowblade.git
+-        branch: master
+-        commit: b0b21b59bd56c9b67790630760438b9c5d377b1e
+-        # tag: v2.4.0.1-fix_release
++      - type: dir
++        path: /home/janne/codes/flowblade/flowblade
++   
+```
 
 ## OTHER COMMANDS
 
