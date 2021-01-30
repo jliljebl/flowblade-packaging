@@ -4,7 +4,7 @@ CODE_ROOT_DIR="/home/janne/codes/flowblade/flowblade/flowblade-trunk"
 CODE_SOURCE_DIR=$CODE_ROOT_DIR"/Flowblade"
 
 PACKING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-VERSION="2.6.0"
+VERSION="2.8.0"
 PACKAGE_NAME="flowblade-"$VERSION
 DEB_ROOT_DIR=$PACKING_DIR"/flowblade"
 DEB_ARCHIVE_DIR=$DEB_ROOT_DIR"/"$PACKAGE_NAME"-1_all"
@@ -21,6 +21,8 @@ mkdir $DEB_ROOT_DIR
 mkdir $DEB_ARCHIVE_DIR
 mkdir $DEBIAN_DIR
 mkdir $USR_DIR
+mkdir -p $USR_CODE_DIR
+mkdir $USR_DIR"/bin"
 
 # Copy static files
 cp -a $PACKING_DIR"/DEBIAN_CONTENTS/." $DEB_ARCHIVE_DIR"/DEBIAN"
@@ -28,7 +30,7 @@ cp -a $PACKING_DIR"/USR_CONTENTS/." $USR_DIR
 
 # Copy version dependendent files
 cp $PACKING_DIR"/VERSION_FILES/control" $DEBIAN_DIR"/control"
-cp $PACKING_DIR"/VERSION_FILES/flowblade.egg-info" $USR_DIR"/share/flowblade/"$PACKAGE_NAME".egg.info"
+cp $PACKING_DIR"/VERSION_FILES/flowblade.egg-info" $USR_DIR"/share/flowblade/"$PACKAGE_NAME".egg-info"
 cp $PACKING_DIR"/VERSION_FILES/changelog" $PACKING_DIR"/VERSION_FILES/changelog.Debian" 
 gzip --best  -n $PACKING_DIR"/VERSION_FILES/changelog.Debian"
 cp $PACKING_DIR"/VERSION_FILES/changelog.Debian.gz" $USR_DIR"/share/doc/flowblade/changelog.Debian.gz"
@@ -48,6 +50,7 @@ cp $CODE_ROOT_DIR"/flowblade" $USR_DIR"/bin/flowblade"
 sudo chown -R root:root $DEB_ARCHIVE_DIR
 
 # dirs and executables to 755
+sudo chmod -R 755 $USR_DIR
 sudo chmod -R 755 $USR_DIR"/bin"
 sudo chmod -R 755 $USR_DIR"/lib"
 sudo chmod -R 755 $USR_DIR"/share/flowblade/Flowblade/launch"
@@ -60,13 +63,12 @@ sudo chmod 0755 $DEBIAN_DIR"/prerm"
 
 sudo chmod 755 $USR_DIR"/share"
 sudo chmod 755 $USR_DIR"/share/applications"
-sudo chmod 755 $USR_DIR"/share/flowblade"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/res/render/"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/res/render/renderencoding.xml"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/tools/"
 sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/vieweditor/"
-sudo chmod 755 $USR_DIR"/share/flowblade/flowblade-2.6.1.egg.info"
+sudo chmod 644 $USR_DIR"/share/flowblade/flowblade-2.8.0.egg-info"
 sudo chmod 755 $USR_DIR"/share/mime/packages/flowblade.xml"
 sudo chmod 755 $USR_DIR"/share/man/"
 sudo chmod 755 $USR_DIR"/share/man/man1/"
@@ -77,8 +79,6 @@ sudo chmod 755 $USR_DIR"/share/pixmaps/"
 sudo chmod 755 $USR_DIR"/share/python/"
 sudo chmod 755 $USR_DIR"/share/python/runtime.d/"
 sudo chmod 755 $USR_DIR"/share/python/runtime.d/flowblade.rtupdate"
-#sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/phantom2d/"
-#sudo chmod 755 $USR_DIR"/share/flowblade/Flowblade/phantom2d/serverlaunch"
 
 # Python files
 sudo find $USR_DIR -name "*.py" -exec chmod 644 {} \;
@@ -111,11 +111,20 @@ sudo find $USR_DIR"/share/flowblade/Flowblade/locale/pl" -name "*.*" -exec chmod
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/zh_CN" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/zh_TW" -name "*.*" -exec chmod 644 {} \;
 sudo find $USR_DIR"/share/flowblade/Flowblade/locale/Flowblade" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css/assets" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css/sass" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css2/assets" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css2/sass" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css2" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css3/assets" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css3/sass" -name "*.*" -exec chmod 644 {} \;
+sudo find $USR_DIR"/share/flowblade/Flowblade/res/css3" -name "*.*" -exec chmod 644 {} \;
 
-sudo find $USR_DIR"/share/flowblade/Flowblade/res/help/developers"
-sudo find $USR_DIR"/share/flowblade/Flowblade/res/help/contributors"
-sudo find $USR_DIR"/share/flowblade/Flowblade/res/shortcuts/premiere.xml"
-sudo find $USR_DIR"/share/flowblade/Flowblade/res/shortcuts/flowblade.xml"
+#sudo find $USR_DIR"/share/flowblade/Flowblade/res/help/developers"
+#sudo find $USR_DIR"/share/flowblade/Flowblade/res/help/contributors"
+#sudo find $USR_DIR"/share/flowblade/Flowblade/res/shortcuts/premiere.xml"
+#sudo find $USR_DIR"/share/flowblade/Flowblade/res/shortcuts/flowblade.xml"
 
 sudo find $USR_DIR -name "*.po" -exec chmod 644 {} \;
 
@@ -128,8 +137,6 @@ sudo chmod 644 $USR_DIR"/share/applications/flowblade.desktop"
 sudo chmod 644 $USR_DIR"/share/menu/flowblade"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/res/help/translations"
 sudo chmod 644 $USR_DIR"/share/pixmaps/flowblade.png"
-#sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/phantom2d/build.xml"
-sudo chmod 644 $USR_DIR"/share/flowblade/flowblade-2.6.1.egg.info"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/res/help/gpl3"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/locale/iso_locales"
 sudo chmod 644 $USR_DIR"/share/flowblade/Flowblade/res/help/developers"
@@ -141,9 +148,20 @@ sudo chmod 644 $USR_DIR"/lib/mime/packages/flowblade"
 
 # Remove .pyc files
 sudo find $USR_DIR -type f -iname '*.pyc' -delete
+sudo rmdir $USR_DIR"/share/flowblade/Flowblade/__pycache__/"
+sudo rmdir $USR_DIR"/share/flowblade/Flowblade/tools/__pycache__/"
+sudo rmdir $USR_DIR"/share/flowblade/Flowblade/vieweditor/__pycache__/"
+
+# Remove theme dev scripts
+sudo rm $USR_DIR"/share/flowblade/Flowblade/res/css/assets-render.sh"
+sudo rm $USR_DIR"/share/flowblade/Flowblade/res/css2/assets-render.sh"
+sudo rm $USR_DIR"/share/flowblade/Flowblade/res/css3/assets-render.sh"
 
 
 # BUILD PACKAGE
 dpkg-deb --build $DEB_ARCHIVE_DIR
+
+# get info 
+lintian --no-tag-display-limit $DEB_ROOT_DIR"/"$PACKAGE_NAME"-1_all.deb"
 
 

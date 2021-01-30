@@ -2,7 +2,7 @@ Flowblade is a non-linear video editor for linux
 
 Main depencies
 --------------
-1) Python 2.7+ 
+1) Python 3.7+ 
 2) GTK, PyGTK, Cairo 
 3) MLT Framework (http://www.mltframework.org)
 4) LADSPA Audio plugins

@@ -1,6 +1,5 @@
-flowblade (2.6.1-1) unstable; urgency=low
+flowblade (2.8.0-1) unstable; urgency=low
 
    * Initial release (Closes: #14662)
 
- -- Janne Liljeblad <janne.liljeblad@gmail.com> 
-
+-- Janne Liljeblad <janne.liljeblad@gmail.com>   Friday, 25 Sep 2020 23:37:12 +2
