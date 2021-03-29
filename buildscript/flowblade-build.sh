@@ -32,7 +32,7 @@ function fetch-git {
 }
 
 # fetch-tar
-# Downloads tar file, unpacks it to temo dirtectory and moves data to another directory.
+# Downloads tar file, unpacks it to temp dirtectory and moves data to another directory.
 # $1 : SOURCE_DIR
 # $2 : SUBDIR
 # $3 : REPOLOC
@@ -91,6 +91,8 @@ LIBVPX="libvpx"
 NV_CODEC_HEADERS="nv-codec-headers"
 SWH_PLUGINS="swh-plugins"
 FFMPEG="FFmpeg"
+MLT="mlt"
+FLOWBLADE="flowblade"
 
 # Figure out the number of cores in the system. Use as make flag to make 
 # building faster with multiple CPU threads.
@@ -100,6 +102,8 @@ if test 0 = $CPUS ; then
  CPUS=1
 fi
 MAKEJ=$(( $CPUS ))
+
+
 
 ################################################################################
 # FETCH SOURCE FOR SUBPROJECTS                                                 #
@@ -171,8 +175,13 @@ REVISION="master"
 REPOLOC="git://github.com/FFmpeg/FFmpeg.git"
 fetch-git "$SOURCE_DIR" "$SUBDIR" "$REVISION" "$REPOLOC"
 
+SUBDIR=$MLT
+REVISION="master"
+REPOLOC="git://github.com/mltframework/mlt.git"
+fetch-git "$SOURCE_DIR" "$SUBDIR" "$REVISION" "$REPOLOC"
+
 # Flowblade
-SUBDIR="flowblade"
+SUBDIR=$FLOWBLADE
 REVISION="master"
 REPOLOC="git://github.com/jliljebl/flowblade.git"
 fetch-git "$SOURCE_DIR" "$SUBDIR" "$REVISION" "$REPOLOC"
@@ -183,6 +192,13 @@ fetch-git "$SOURCE_DIR" "$SUBDIR" "$REVISION" "$REPOLOC"
 ################################################################################
 
 echo "Compiling subprojects..."
+echo "Using $MAKEJ CPUs for build."
+
+
+
+export PATH="$FINAL_INSTALL_DIR/bin:$PATH"
+export LD_RUN_PATH="$FINAL_INSTALL_DIR/lib"
+export PKG_CONFIG_PATH="$FINAL_INSTALL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 # Set flags to clear state
 export CFLAGS=-DNDEBUG
@@ -195,7 +211,7 @@ if [[ DO_COMPILE -eq 1 ]]; then
     export CFLAGS=`-O2`
     ./autogen.sh 
     ./configure --prefix=$FINAL_INSTALL_DIR
-    make
+    make -j$MAKEJ
     make install
  
   #tsekkaa tämä, tarviiko laittaa että MLT löytää?
@@ -213,7 +229,7 @@ setup-compile-for-subproject $OPUS
 if [[ DO_COMPILE -eq 1 ]]; then
     ./autogen.sh
     ./configure --prefix=$FINAL_INSTALL_DIR
-    make 
+    make -j$MAKEJ 
     make install || die "Unable to install $OPUS"
 fi
 
@@ -221,7 +237,7 @@ fi
 setup-compile-for-subproject $X264
 if [[ DO_COMPILE -eq 1 ]]; then
     ./configure --prefix=$FINAL_INSTALL_DIR --disable-lavf --disable-ffms --disable-gpac --disable-swscale --enable-shared --disable-cli $CONFIGURE_DEBUG_FLAG
-    make 
+    make -j$MAKEJ 
     make install || die "Unable to install $X264"
 fi
 # --enable-libx264"
@@ -232,7 +248,7 @@ if [[ DO_COMPILE -eq 1 ]]; then
     cd source # x265 source is not in subdir root.
     # CMAKE_DEBUG_FLAG="-DCMAKE_BUILD_TYPE=Debug # if doing debug then uncomment
     cmake -DCMAKE_INSTALL_PREFIX=$FINAL_INSTALL_DIR -DENABLE_CLI=OFF -DHIGH_BIT_DEPTH=ON $CMAKE_DEBUG_FLAG
-    make
+    make -j$MAKEJ
     make install
 fi
 # --enable-libx265"
@@ -241,7 +257,7 @@ fi
 setup-compile-for-subproject $LIBVPX
 if [[ DO_COMPILE -eq 1 ]]; then
     ./configure --prefix=$FINAL_INSTALL_DIR --enable-vp8 --enable-postproc --enable-multithread --enable-runtime-cpu-detect --disable-install-docs --disable-debug-libs --disable-examples --disable-unit-tests --extra-cflags=-std=c99 --enable-shared $CONFIGURE_DEBUG_FLAG
-    make
+    make -j$MAKEJ
     make install
 fi
 # --enable-libvpx
@@ -269,23 +285,64 @@ fi
 setup-compile-for-subproject $SWH_PLUGINS
 if [[ DO_COMPILE -eq 1 ]]; then
     ./configure --prefix=$FINAL_INSTALL_DIR --enable-sse
-    make
+    make -j$MAKEJ
+    make install
+fi
+  
+# FFmpeg
+setup-compile-for-subproject $FFMPEG
+if [[ DO_COMPILE -eq 1 ]]; then
+    #cd "$SOURCE_DIR/$FFMPEG"
+    ./configure --prefix=$FINAL_INSTALL_DIR --disable-static --disable-doc --enable-gpl --enable-version3 --enable-shared --enable-runtime-cpudetect $CONFIGURE_DEBUG_FLAG --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-nonfree --enable-libx264 --enable-libx265 --enable-libvpx --enable-libopus
+    make -j$MAKEJ
     make install
 fi
 
-export PATH="$FINAL_INSTALL_DIR/bin:$PATH"
-export LD_RUN_PATH="$FINAL_INSTALL_DIR/lib"
-export PKG_CONFIG_PATH="$FINAL_INSTALL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
-  
-# FFmpeg
-#setup-compile-for-subproject $FFMPEG
-#if [[ DO_COMPILE -eq 1 ]]; then
-cd "$SOURCE_DIR/$FFMPEG"
-./configure --prefix=$FINAL_INSTALL_DIR --disable-static --disable-doc --enable-gpl --enable-version3 --enable-shared --enable-runtime-cpudetect $CONFIGURE_DEBUG_FLAG --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-nonfree --enable-libx264 --enable-libx265 --enable-libvpx --enable-libopus
-make
-make install
-#fi
+# mlt
+setup-compile-for-subproject $MLT
+if [[ DO_COMPILE -eq 1 ]]; then
+    export CXXFLAGS="$CFLAGS -std=c++11"
+    export CFLAGS="-I$FINAL_INSTALL_DIR/include $ASAN_CFLAGS $CFLAGS"
+    export LDFLAGS="-L$FINAL_INSTALL_DIR/lib $LDFLAGS"
+    
+    ./configure --prefix=$FINAL_INSTALL_DIR --enable-gpl --enable-gpl3 --without-kde --disable-gtk2 --swig-languages=python
+    make -j$MAKEJ
+    make install
+fi
 
+# flowblade
+setup-compile-for-subproject $FLOWBLADE
+if [[ DO_COMPILE -eq 1 ]]; then
+    cp -a flowblade-trunk "$FINAL_INSTALL_DIR" || die "Unable to install $1" # Copy app code
+    cp -a ../mlt/src/swig/python/{_mlt.so,mlt.py} "$FINAL_INSTALL_DIR"/flowblade-trunk # Copy mlt bindings
+fi
+
+
+TMPFILE=`mktemp -t build-flowblade.start.XXXXXXXXX`
+ 
+cat > "$TMPFILE" <<End-of-startup-script-template
+
+#!/bin/sh
+
+# Setup the environment
+export INSTALL_DIR=$FINAL_INSTALL_DIR 
+export PATH="\$INSTALL_DIR/bin:$PATH"
+export LD_LIBRARY_PATH="\$INSTALL_DIR/lib:\$LD_LIBRARY_PATH"
+export MLT_REPOSITORY="\$INSTALL_DIR/lib/mlt"
+export MLT_DATA="\$INSTALL_DIR/share/mlt"
+export MLT_PROFILES_PATH=\$INSTALL_DIR/share/mlt/profiles
+export MLT_MOVIT_PATH="\$INSTALL_DIR/share/movit"
+export FREI0R_PATH="\$INSTALL_DIR/lib/frei0r-1"
+
+python3 "\$INSTALL_DIR/flowblade-trunk/flowblade" "\$@"
+
+End-of-startup-script-template
+
+if test 0 != $? ; then
+die "Unable to create environment script"
+fi
+chmod 755 $TMPFILE || die "Unable to make environment script executable"
+cp $TMPFILE "$FINAL_INSTALL_DIR/start-flowblade" || die "Unable to create environment script - cp failed"
 echo "Build finished."
 
 
