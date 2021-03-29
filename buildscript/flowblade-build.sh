@@ -305,7 +305,7 @@ if [[ DO_COMPILE -eq 1 ]]; then
     export CFLAGS="-I$FINAL_INSTALL_DIR/include $ASAN_CFLAGS $CFLAGS"
     export LDFLAGS="-L$FINAL_INSTALL_DIR/lib $LDFLAGS"
     
-    ./configure --prefix=$FINAL_INSTALL_DIR --enable-gpl --enable-gpl3 --without-kde --disable-gtk2 --swig-languages=python
+    ./configure --prefix=$FINAL_INSTALL_DIR --enable-gpl --enable-gpl3 --disable-xine --disable-vmfx --disable-swfdec --disable-videostab --disable-jackrack --disable-kdenlive --without-kde --disable-gtk2 --swig-languages=python
     make -j$MAKEJ
     make install
 fi
@@ -316,6 +316,10 @@ if [[ DO_COMPILE -eq 1 ]]; then
     cp -a flowblade-trunk "$FINAL_INSTALL_DIR" || die "Unable to install $1" # Copy app code
     cp -a ../mlt/src/swig/python/{_mlt.so,mlt.py} "$FINAL_INSTALL_DIR"/flowblade-trunk # Copy mlt bindings
 fi
+
+################################################################################
+# CREATE START_UP SCRIPT                                                       #
+################################################################################
 
 
 TMPFILE=`mktemp -t build-flowblade.start.XXXXXXXXX`
@@ -343,6 +347,8 @@ die "Unable to create environment script"
 fi
 chmod 755 $TMPFILE || die "Unable to make environment script executable"
 cp $TMPFILE "$FINAL_INSTALL_DIR/start-flowblade" || die "Unable to create environment script - cp failed"
+
+
 echo "Build finished."
 
 
