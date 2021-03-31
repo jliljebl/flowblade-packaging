@@ -74,7 +74,7 @@ DO_COMPILE=0 # global flag that gets set when deciding wheather to compli subpro
 SUB_PROJECT_COMPILE_LIST="" # We only compile subproject subprojects, 
 
 # Set directories.
-INSTALL_DIR="$HOME/flowblade" # Change this to point to dir you wish to install dev build, e.g. "/home/janne/codes/dev-build"
+INSTALL_DIR="$PWD/flowblade" # Change this to point to dir you wish to install the dev build, e.g. "/home/janne/codes/dev-build"
 SOURCE_DIR="$INSTALL_DIR/src"
 FINAL_INSTALL_DIR="$INSTALL_DIR/Flowblade"
 
