@@ -74,7 +74,7 @@ DO_COMPILE=0 # global flag that gets set when deciding wheather to compli subpro
 SUB_PROJECT_COMPILE_LIST="" # We only compile subproject subprojects, 
 
 # Set directories.
-INSTALL_DIR="/home/janne/codes/dev-build"
+INSTALL_DIR="$HOME/flowblade" # Change this to point to dir you wish to install dev build, e.g. "/home/janne/codes/dev-build"
 SOURCE_DIR="$INSTALL_DIR/src"
 FINAL_INSTALL_DIR="$INSTALL_DIR/Flowblade"
 
@@ -194,14 +194,11 @@ fetch-git "$SOURCE_DIR" "$SUBDIR" "$REVISION" "$REPOLOC"
 echo "Compiling subprojects..."
 echo "Using $MAKEJ CPUs for build."
 
-
-
 export PATH="$FINAL_INSTALL_DIR/bin:$PATH"
 export LD_RUN_PATH="$FINAL_INSTALL_DIR/lib"
 export PKG_CONFIG_PATH="$FINAL_INSTALL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-# Set flags to clear state
-export CFLAGS=-DNDEBUG
+export CFLAGS=-DNDEBUG # works, but we may need to think more about setting these.
 export CXXFLAGS=-DNDEBUG
 export LDFLAGS=
 
@@ -292,7 +289,6 @@ fi
 # FFmpeg
 setup-compile-for-subproject $FFMPEG
 if [[ DO_COMPILE -eq 1 ]]; then
-    #cd "$SOURCE_DIR/$FFMPEG"
     ./configure --prefix=$FINAL_INSTALL_DIR --disable-static --disable-doc --enable-gpl --enable-version3 --enable-shared --enable-runtime-cpudetect $CONFIGURE_DEBUG_FLAG --enable-libtheora --enable-libvorbis --enable-libmp3lame --enable-nonfree --enable-libx264 --enable-libx265 --enable-libvpx --enable-libopus
     make -j$MAKEJ
     make install
