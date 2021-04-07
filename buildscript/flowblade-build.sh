@@ -31,6 +31,27 @@ function fetch-git {
     fi
 }
 
+# copy-local-git
+# Downloads git repo if no folder.
+# $1 : SOURCE_DIR
+# $2 : SUBDIR
+# $3 : REVISION
+# $4 : COPY_SOURCE_DIR
+function copy-local-git {
+    if [ ! -d "$1/$2" ]
+    then
+        echo "Copying local dir $2."
+        cd "$1"
+        mkdir -p "$1/$2"
+        cp -r "$4" "."
+        cd "$2"
+        git checkout $3 || die "Unable to git checkout $3"
+        SUB_PROJECT_COMPILE_LIST="$2 $SUB_PROJECT_COMPILE_LIST"
+    else
+        echo "Source dir $2 exists, no local copy."
+    fi
+}
+
 # fetch-tar
 # Downloads tar file, unpacks it to temp dirtectory and moves data to another directory.
 # $1 : SOURCE_DIR
@@ -248,7 +269,7 @@ if [[ DO_COMPILE -eq 1 ]]; then
     make -j$MAKEJ
     make install
 fi
-# --enable-libx265"
+# --enable-libx265
 
 # libvpx
 setup-compile-for-subproject $LIBVPX
