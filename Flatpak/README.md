@@ -31,7 +31,7 @@ Install application
     flatpak install flathub org.gnome.Sdk//3.xx (system)
     
     git clone --recurse-submodules https://github.com/flathub/io.github.jliljebl.Flowblade.git 
-    
+
     cd io.github.jliljebl.Flowblade 
     
     sudo flatpak-builder --ccache --install --force-clean build_dir io.github.jliljebl.Flowblade.yaml 
@@ -50,7 +50,7 @@ git merge flathub/master
 
 ## USING LOCAL FILES FOR TEST BUILD
 
-Typical change:
+Typical required change in io.github.jliljebl.flatpak.yaml file:
 
 ```bash
     sources:
@@ -58,7 +58,6 @@ Typical change:
 -        url: https://github.com/jliljebl/flowblade.git
 -        branch: master
 -        commit: b0b21b59bd56c9b67790630760438b9c5d377b1e
--        # tag: v2.4.0.1-fix_release
 +      - type: dir
 +        path: /home/janne/codes/flowblade/flowblade
 +   
